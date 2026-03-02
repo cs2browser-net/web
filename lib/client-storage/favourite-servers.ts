@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 const FAVOURITE_SERVERS_KEY = 'cs2browser-favorites';

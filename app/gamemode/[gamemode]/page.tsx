@@ -1,18 +1,41 @@
-"use client";
-
 import PageLayout from "@/components/layouts/PageLayout";
 import HomePage from "@/components/pages/HomePage";
-import { use } from "react";
+import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
+import { Metadata, Viewport } from "next";
+import { GamemodeSlugs } from "@/lib/filters/gamemodes";
 
-// export const metadata: Metadata = {
-//     ...defaultMetadata,
-//     title: "CS2Browser.net - Find Counter-Strike 2 servers",
-// }
+type Props = {
+    params: Promise<{ gamemode: string }>;
+}
 
-// export const viewport: Viewport = defaultViewport
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { gamemode } = await params;
+    const spec = GamemodeSlugs[gamemode];
+    
+    if (!spec) {
+        return {
+            ...defaultMetadata,
+            title: "Gamemode - CS2Browser.net",
+        };
+    }
 
-export default function Home({ params }: { params: Promise<{ gamemode?: string }> }) {
-    const { gamemode } = use(params);
+    const gamemodeName = typeof spec.text === 'string' 
+        ? spec.text 
+        : spec.text[0].toString().replace(/_$/, '');
+    
+    const formattedName = gamemodeName.charAt(0).toUpperCase() + gamemodeName.slice(1);
+    
+    return {
+        ...defaultMetadata,
+        title: `${formattedName} Servers - CS2Browser.net`,
+        description: `Find the best Counter-Strike 2 ${formattedName} servers. Browse and join CS2 ${formattedName} servers by location, ping, and player count.`,
+    };
+}
+
+export const viewport: Viewport = defaultViewport
+
+export default async function Home({ params }: Props) {
+    const { gamemode } = await params;
 
     return (
         <PageLayout>

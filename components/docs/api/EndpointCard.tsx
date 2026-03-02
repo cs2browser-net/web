@@ -1,3 +1,5 @@
+"use client";
+
 import { APIEndpoint } from "@/lib/api/data";
 import { ChevronRight, Copy, Play } from "lucide-react";
 import { FC, useState } from "react";

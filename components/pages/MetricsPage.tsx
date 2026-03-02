@@ -1,3 +1,5 @@
+"use client";
+
 import { trpc } from "@/lib/trpc/client";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { useMemo, useState } from "react";

@@ -3,6 +3,16 @@ import Swiftly from '@/images/group/swiftlys2.png'
 import CS2Browser from '@/images/group/cs2browser.png'
 import Image from "next/image";
 import Link from "next/link";
+import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
+import { Metadata, Viewport } from "next";
+
+export const metadata: Metadata = {
+    ...defaultMetadata,
+    title: "Swiftly Group - CS2Browser.net",
+    description: "Learn about Swiftly Group, the team behind CS2Browser.net and Swiftly CS2 plugin framework. Discover our Counter-Strike 2 development projects.",
+}
+
+export const viewport: Viewport = defaultViewport
 
 export default function Group() {
     return (

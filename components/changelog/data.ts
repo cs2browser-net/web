@@ -1,5 +1,3 @@
-'use client';
-
 export type ChangeType = 'feature' | 'improvement' | 'bugfix' | 'performance';
 
 export interface ChangeItem {
@@ -21,6 +19,19 @@ export interface ChangelogEntry {
 }
 
 export const changelog: ChangelogEntry[] = [
+    {
+        date: '2026-03-02',
+        changes: {
+            feature: [
+                {
+                    type: 'feature',
+                    title: 'Rework',
+                    description: 'Reworked the design of the website and the performance.',
+                    details: []
+                }
+            ]
+        }
+    },
     {
         date: '2025-10-14',
         changes: {

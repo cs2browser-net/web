@@ -1,13 +1,9 @@
+"use client";
+
 import { FilterState } from "@/lib/filters/store";
 import { ChevronDown, Circle, Eye, EyeOff, Search } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-
-interface FiltersComponentProps {
-    filters: FilterState;
-    onFiltersChange: (filters: FilterState) => void;
-    onClearFilters: () => void;
-}
 
 function isNumberArray(arr: number[] | string[]): arr is number[] {
     return arr.every(v => typeof v === "number");

@@ -1,15 +1,16 @@
-"use client";
-
 import { changelog, getTypeColor, getTypeIcon, getTypeName, hasChanges } from "@/components/changelog/data";
 import PageLayout from "@/components/layouts/PageLayout";
 import { Badge } from "@/components/ui/badge";
+import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
+import { Metadata, Viewport } from "next";
 
-// export const metadata: Metadata = {
-//     ...defaultMetadata,
-//     title: "CS2Browser.net - Find Counter-Strike 2 servers",
-// }
+export const metadata: Metadata = {
+    ...defaultMetadata,
+    title: "Changelog - CS2Browser.net",
+    description: "View the latest updates, features, and improvements to CS2Browser.net. Stay informed about new features, bug fixes, and enhancements to the CS2 server browser.",
+}
 
-// export const viewport: Viewport = defaultViewport
+export const viewport: Viewport = defaultViewport
 
 export default function ChangelogPage() {
 

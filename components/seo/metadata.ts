@@ -1,5 +1,3 @@
-"use client";
-
 import { Metadata, Viewport } from "next";
 
 export const defaultMetadata: Metadata = {

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import ServerList from "../serverview/ServerList";
 import { trpc } from "@/lib/trpc/client";

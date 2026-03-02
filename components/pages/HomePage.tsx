@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import SearchBox from "../serverview/SearchBox";
 import ServerList from "../serverview/ServerList";

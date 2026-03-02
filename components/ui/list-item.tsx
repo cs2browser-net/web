@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { NavigationMenuLink } from "./navigation-menu";
 import { forwardRef } from "react";

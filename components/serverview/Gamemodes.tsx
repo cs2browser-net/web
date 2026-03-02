@@ -1,3 +1,5 @@
+"use client";
+
 import { allCategories, gamemodeToSlug, mainCategories } from "@/lib/filters/gamemodes";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -1,3 +1,5 @@
+"use client";
+
 import { trpc } from "@/lib/trpc";
 import LoadingPage from "../server/LoadingPage";
 import { Button } from "../ui/button";
