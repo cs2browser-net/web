@@ -6,3 +6,6 @@ onlyBuiltDependencies:
   - '@prisma/engines'
   - canvas
   - prisma
+
+packages:
+  - '*'
