@@ -1,0 +1,72 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model Tasks {
+    ID           String @id @default(uuid())
+    TaskKind     Int
+    TaskData     Json
+    TaskExecuted Int    @default(0)
+}
+
+model RateLimit {
+    ID          String   @id @default(uuid())
+    IP          String
+    Kind        String
+    Count       Int      @default(0)
+    LastSeen    DateTime
+    WindowStart DateTime
+}
+
+model Server {
+    ID          String       @id @default(uuid())
+    Address     String       @unique
+    Country     String
+    Latitute    Float
+    Longitude   Float
+    Status      Int          @default(0)
+    LastUpdated DateTime?
+    serverData  ServerData?
+    playersData PlayersData?
+}
+
+model PlayersData {
+    ServerID       String   @unique
+    List           Json
+    MaxLast24Hours Json
+    MaxLast7Days   Json
+    MaxLast30Days  Json
+    Timestamp      DateTime
+    server         Server?  @relation(fields: [ServerID], references: [ID])
+}
+
+model ServerData {
+    ServerID     String  @unique
+    Hostname     String
+    Map          String
+    MaxPlayers   Int
+    PlayersCount Int
+    BotsCount    Int
+    Version      String
+    Secure       Boolean
+    Tags         String
+    server       Server? @relation(fields: [ServerID], references: [ID])
+}
+
+model Metrics {
+    ID                   Int  @id @default(autoincrement())
+    CheckedLast24Hours   Json
+    CheckedLast7Days     Json
+    CheckedLast30Days    Json
+    PrefilterLast24Hours Json
+    PrefilterLast7Days   Json
+    PrefilterLast30Days  Json
+    PlayersLast24Hours   Json
+    PlayersLast7Days     Json
+    PlayersLast30Days    Json
+}

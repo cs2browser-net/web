@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://cs2browser.net
+
+# Sitemaps
+Sitemap: https://cs2browser.net/sitemap.xml
