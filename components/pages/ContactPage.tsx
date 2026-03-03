@@ -18,7 +18,7 @@ export default function Contact() {
 
             <div className="bg-gray-900/30 backdrop-blur-sm rounded-lg border border-gray-700/50 p-6 mb-6">
                 <h2 className="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {faqItems.map((item, index) => (
                         <div key={index} className="pb-4 last:border-b-0 last:pb-0">
                             <h3 className="text-white font-medium mb-2 text-sm md:text-base">
@@ -46,7 +46,7 @@ export default function Contact() {
                 </div>
             </div>
 
-            <div className="flex flex-row gap-6 w-full mb-6">
+            <div className="flex flex-col md:flex-row gap-6 w-full mb-6">
                 {contactMethods.map((method, index) => (
                     <div key={index} className="bg-gray-900/30 backdrop-blur-sm w-full rounded-lg border border-gray-700/50 p-6 hover:bg-gray-800/30 transition-colors">
                         <div className="flex items-center mb-4">
