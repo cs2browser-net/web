@@ -74,7 +74,7 @@ export default function SearchBox({ onToggleFilters, servers }: SearchBoxProps) 
                         <Search />
                     </InputGroupAddon>
                     <InputGroupAddon align={"inline-end"}>
-                        {servers?.count ?? 0} servers found
+                        {servers?.count ?? 0} servers
                     </InputGroupAddon>
                 </InputGroup>
                 <div

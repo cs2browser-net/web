@@ -83,21 +83,34 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
             `}
         >
             <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center min-w-0 flex-1 mr-3">
-                    <div className="flex-shrink-0 mr-2 flex items-center">
-                        <img src={`https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${server.server.Country}.svg`} alt={server.server.Country} style={{ width: '1.25em', height: '1em' }} />
-                    </div>
-                    <div className="min-w-0 flex-1">
+                <div className="flex items-center flex-1 mr-3">
+                    <div className="flex-1">
                         <Link href={`/server/${server.ServerID}`} prefetch={"auto"}>
-                            <div className="text-white text-base font-semibold truncate leading-tight hover:text-[#00feed] transition-colors cursor-pointer">
+                            <div className="text-white text-base font-base truncate leading-tight hover:text-[#00feed] transition-colors cursor-pointer">
                                 {server.Hostname.length > 35 ? `${server.Hostname.substring(0, 35)}...` : server.Hostname}
                             </div>
                         </Link>
                     </div>
                 </div>
+            </div>
+
+            <div className="flex items-center justify-between text-base">
+                <div className="flex items-center flex-1 mr-3">
+                    <div className="flex-shrink-0 mr-2 flex items-center">
+                        <img src={`https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${server.server.Country}.svg`} alt={server.server.Country} style={{ width: '1.25em', height: '1em' }} />
+                    </div>
+                    <button
+                        onClick={handleCopyIP}
+                        className="text-gray-300 text-xs font-mono hover:text-[#00feed] hover:bg-gray-800/40 px-2 py-1.5 rounded transition-colors duration-200 group flex items-center"
+                        title="Click to copy IP"
+                    >
+                        <span className="mr-1">{server.server.Address}</span>
+                        <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                </div>
                 <div className="flex items-center space-x-2 flex-shrink-0">
                     <div className="flex flex-col items-end">
-                        <span className="text-white text-base font-mono font-semibold">
+                        <span className="text-white text-base font-mono font-base">
                             {server.PlayersCount}/{server.MaxPlayers}
                         </span>
                         {server.BotsCount > 0 && (
@@ -112,7 +125,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
                 </div>
             </div>
 
-            <div className="flex items-center justify-between text-base">
+            <div className="flex items-center justify-between text-base mt-2">
                 <div className="flex items-center space-x-4 text-gray-400 min-w-0 flex-1">
                     <button
                         onClick={handleToggleFavorite}
@@ -133,14 +146,6 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
                     </span>
                 </div>
                 <div className="flex items-center space-x-1 flex-shrink-0 ml-2">
-                    <button
-                        onClick={handleCopyIP}
-                        className="text-gray-300 text-xs font-mono hover:text-[#00feed] hover:bg-gray-800/40 px-2 py-1.5 rounded transition-colors duration-200 group flex items-center"
-                        title="Click to copy IP"
-                    >
-                        <span className="mr-1">{server.server.Address}</span>
-                        <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
                     <button
                         onClick={handleConnect}
                         className="text-white bg-green-500 hover:bg-green-600 p-1.5 rounded transition-colors duration-200 flex items-center justify-center"
