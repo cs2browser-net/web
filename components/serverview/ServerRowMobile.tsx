@@ -86,7 +86,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
                 <div className="flex items-center flex-1 mr-3">
                     <div className="flex-1">
                         <Link href={`/server/${server.ServerID}`} prefetch={"auto"}>
-                            <div className="text-white text-base font-base truncate leading-tight hover:text-[#00feed] transition-colors cursor-pointer">
+                            <div className="text-white text-base font-base break-word leading-tight hover:text-[#00feed] transition-colors cursor-pointer">
                                 {server.Hostname.length > 35 ? `${server.Hostname.substring(0, 35)}...` : server.Hostname}
                             </div>
                         </Link>
