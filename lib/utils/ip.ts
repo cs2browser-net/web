@@ -1,13 +1,12 @@
 import { mmdbv4, mmdbv6 } from "../location/maxmind";
 import { Location } from "../location/store";
 
-export function GetClientIP(headers: Record<string, string>) {
-    let ip = "127.0.0.1";
-    console.log(headers)
-    console.log(headers["cf-connecting-ip"])
-    if (headers.hasOwnProperty("cf-connecting-ip")) {
-        ip = headers["cf-connecting-ip"];
-    }
+export function GetClientIP(headers: Headers) {
+    const ip =
+        (headers.get("cf-connecting-ip") as string) ||
+        (headers.get("x-forwarded-for") as string)?.split(",")[0] ||
+        headers.get("x-real-ip") ||
+        "127.0.0.1";
 
     if (ip == "127.0.0.1" || ip == "::1") {
         return "0.0.0.0";

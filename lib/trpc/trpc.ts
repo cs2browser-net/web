@@ -4,7 +4,7 @@ import { GetClientIP } from "../utils/ip";
 
 export async function createContext({ req }: { req: Request }) {
     return {
-        ip: GetClientIP(req.headers as unknown as Record<string, string>)
+        ip: GetClientIP(req.headers)
     };
 }
 
