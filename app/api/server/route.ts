@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
 
-    const context = await createContext();
+    const context = await createContext({ req });
     const caller = appRouter.createCaller(context);
 
     const server = await caller.servers.fetchServer({

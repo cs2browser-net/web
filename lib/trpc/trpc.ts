@@ -1,14 +1,12 @@
 import { initTRPC } from "@trpc/server";
-import { headers } from "next/headers";
 import SuperJSON from "superjson";
 import { GetClientIP } from "../utils/ip";
 
-export async function createContext() {
-    const h = await headers();
-    console.log(h)
+export async function createContext({ req }: { req: Request }) {
+    console.log(req.headers)
 
     return {
-        ip: GetClientIP(h as unknown as Record<string, string>)
+        ip: GetClientIP(req.headers as unknown as Record<string, string>)
     };
 }
 
