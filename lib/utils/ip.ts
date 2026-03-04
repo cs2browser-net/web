@@ -8,6 +8,8 @@ export function GetClientIP(headers: Record<string, string>) {
         headers["x-real-ip"] ||
         "127.0.0.1";
 
+    console.log("Client IP:", ip);
+
     if (ip == "127.0.0.1" || ip == "::1") {
         return "0.0.0.0";
     }

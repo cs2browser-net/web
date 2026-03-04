@@ -3,8 +3,6 @@ import SuperJSON from "superjson";
 import { GetClientIP } from "../utils/ip";
 
 export async function createContext({ req }: { req: Request }) {
-    console.log(req.headers)
-
     return {
         ip: GetClientIP(req.headers as unknown as Record<string, string>)
     };
