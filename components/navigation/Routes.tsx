@@ -1,5 +1,6 @@
 "use client";
 
+import { SITE_VARIANT } from "@/lib/consts/settings";
 import { BarChart3, Code, Eye, Globe, Heart, HelpCircle, List, LucideProps, Users } from "lucide-react";
 
 interface Route {
@@ -22,7 +23,7 @@ export const navigationItems: Record<string, Category> = {
             {
                 title: "Explore Servers",
                 href: "/",
-                description: "Browse all available CS2 servers",
+                description: "Browse all available " + SITE_VARIANT.toUpperCase() + " servers",
                 icon: Globe
             },
             {

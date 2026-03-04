@@ -4,6 +4,7 @@ import { queryCache } from "@/lib/cache/query-cache";
 import { bannerCache } from "@/lib/cache/banner-cache";
 import { prisma } from "@/lib/db/prisma";
 import { ServersQueryCacheTTL } from "@/lib/consts/servers";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 registerFont("./lib/fonts/arial.ttf", { family: "ArlMd" })
 
@@ -110,7 +111,7 @@ function makeBanner(opts: any) {
 
     ctx.fillStyle = "#00FEED";
     ctx.font = "bold 11px ArlMd";
-    ctx.fillText("cs2browser.net", graphX, graphY + graphH + 25);
+    ctx.fillText(SiteSettings[SITE_VARIANT].name.toLowerCase(), graphX, graphY + graphH + 25);
 
     const buffer = canvas.toBuffer("image/png");
     return buffer;

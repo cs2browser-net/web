@@ -1,3 +1,4 @@
+import { SITE_VARIANT } from "@/lib/consts/settings";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
@@ -102,7 +103,7 @@ export default function Charts({ serversChartData, playersChartData }: ChartsInt
                             <div className="w-4 h-4 bg-[#22c55e] rounded-full"></div>
                             <h3 className="text-base md:text-lg font-medium text-white">Total Player Count</h3>
                         </div>
-                        <p className="text-gray-400 text-xs md:text-sm">Total number of players across all CS2 servers</p>
+                        <p className="text-gray-400 text-xs md:text-sm">Total number of players across all {SITE_VARIANT.toUpperCase()} servers</p>
                     </div>
 
                     {playersChartData.length > 0 ? (

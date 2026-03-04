@@ -3,6 +3,7 @@
 import Link from "next/link";
 import DesktopHeader from "./DesktopHeader";
 import MobileHeader from "./MobileHeader";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 export default function Header() {
     return (
@@ -13,7 +14,7 @@ export default function Header() {
                     href="/"
                     className="text-xl flex shrink-0"
                 >
-                    CS2Browser.net
+                    {SiteSettings[SITE_VARIANT].name}
                 </Link>
 
                 <div className="flex items-center space-x-4 flex-1 justify-end">

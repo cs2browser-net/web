@@ -3,6 +3,7 @@ import HomePage from "@/components/pages/HomePage";
 import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
 import { Metadata, Viewport } from "next";
 import { GamemodeSlugs } from "@/lib/filters/gamemodes";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 type Props = {
     params: Promise<{ gamemode: string }>;
@@ -11,24 +12,24 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { gamemode } = await params;
     const spec = GamemodeSlugs[gamemode];
-    
+
     if (!spec) {
         return {
             ...defaultMetadata,
-            title: "Gamemode - CS2Browser.net",
+            title: "Gamemode - " + SiteSettings[SITE_VARIANT].name,
         };
     }
 
-    const gamemodeName = typeof spec.text === 'string' 
-        ? spec.text 
+    const gamemodeName = typeof spec.text === 'string'
+        ? spec.text
         : spec.text[0].toString().replace(/_$/, '');
-    
+
     const formattedName = gamemodeName.charAt(0).toUpperCase() + gamemodeName.slice(1);
-    
+
     return {
         ...defaultMetadata,
-        title: `${formattedName} Servers - CS2Browser.net`,
-        description: `Find the best Counter-Strike 2 ${formattedName} servers. Browse and join CS2 ${formattedName} servers by location, ping, and player count.`,
+        title: `${formattedName} Servers - ${SiteSettings[SITE_VARIANT].name}`,
+        description: `Find the best ${SiteSettings[SITE_VARIANT].gamename} ${formattedName} servers. Browse and join ${SiteSettings[SITE_VARIANT].gamename} ${formattedName} servers by location, ping, and player count.`,
     };
 }
 

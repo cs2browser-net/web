@@ -3,11 +3,12 @@ import PageLayout from "@/components/layouts/PageLayout";
 import { Badge } from "@/components/ui/badge";
 import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
 import { Metadata, Viewport } from "next";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 export const metadata: Metadata = {
     ...defaultMetadata,
-    title: "Changelog - CS2Browser.net",
-    description: "View the latest updates, features, and improvements to CS2Browser.net. Stay informed about new features, bug fixes, and enhancements to the CS2 server browser.",
+    title: "Changelog - " + SiteSettings[SITE_VARIANT].name,
+    description: "View the latest updates, features, and improvements to " + SiteSettings[SITE_VARIANT].name + ". Stay informed about new features, bug fixes, and enhancements to the " + SITE_VARIANT.toUpperCase() + " server browser.",
 }
 
 export const viewport: Viewport = defaultViewport
@@ -22,7 +23,7 @@ export default function ChangelogPage() {
                         Changelog
                     </h1>
                     <p className="text-gray-400 text-md max-w-2xl mx-auto">
-                        Track all the latest updates, improvements, and new features added to CS2Browser.net.
+                        Track all the latest updates, improvements, and new features added to {SiteSettings[SITE_VARIANT].name}.
                     </p>
                 </div>
 

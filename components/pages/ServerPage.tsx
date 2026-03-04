@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { TRPCError } from "@trpc/server";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 export default function ServerPage({ serverid }: { serverid?: string }) {
     const { isFavourite, toggleFavourite } = useFavouriteServers();
@@ -502,13 +503,13 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                     <input
                                         type="text"
                                         readOnly
-                                        value={`https://cs2browser.net/banners/${serverid}/big.png`}
+                                        value={`https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/big.png`}
                                         className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm font-mono"
                                     />
                                     <Button
                                         size="sm"
                                         onClick={() => {
-                                            navigator.clipboard.writeText(`https://cs2browser.net/banners/${serverid}/big.png`);
+                                            navigator.clipboard.writeText(`https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/big.png`);
                                             toast.success('Direct link copied!');
                                         }}
                                         className="bg-[#00feed] hover:bg-[#00feed]/80 text-black"
@@ -524,13 +525,13 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                     <input
                                         type="text"
                                         readOnly
-                                        value={`<a href="https://cs2browser.net/server/${serverid}"><img src="https://cs2browser.net/banners/${serverid}/big.png" alt="Server Banner" /></a>`}
+                                        value={`<a href="https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}"><img src="https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/big.png" alt="Server Banner" /></a>`}
                                         className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm font-mono"
                                     />
                                     <Button
                                         size="sm"
                                         onClick={() => {
-                                            navigator.clipboard.writeText(`<a href="https://cs2browser.net/server/${serverid}"><img src="https://cs2browser.net/banners/${serverid}/big.png" alt="Server Banner" /></a>`);
+                                            navigator.clipboard.writeText(`<a href="https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}"><img src="https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/big.png" alt="Server Banner" /></a>`);
                                             toast.success('HTML code copied!');
                                         }}
                                         className="bg-[#00feed] hover:bg-[#00feed]/80 text-black"
@@ -546,13 +547,13 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                     <input
                                         type="text"
                                         readOnly
-                                        value={`[url=https://cs2browser.net/server/${serverid}][img]https://cs2browser.net/banners/${serverid}/big.png[/img][/url]`}
+                                        value={`[url=https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}][img]https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/big.png[/img][/url]`}
                                         className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm font-mono"
                                     />
                                     <Button
                                         size="sm"
                                         onClick={() => {
-                                            navigator.clipboard.writeText(`[url=https://cs2browser.net/server/${serverid}][img]https://cs2browser.net/banners/${serverid}/big.png[/img][/url]`);
+                                            navigator.clipboard.writeText(`[url=https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}][img]https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/big.png[/img][/url]`);
                                             toast.success('BBCode copied!');
                                         }}
                                         className="bg-[#00feed] hover:bg-[#00feed]/80 text-black"
@@ -583,13 +584,13 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                     <input
                                         type="text"
                                         readOnly
-                                        value={`https://cs2browser.net/banners/${serverid}/small.png`}
+                                        value={`https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/small.png`}
                                         className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm font-mono"
                                     />
                                     <Button
                                         size="sm"
                                         onClick={() => {
-                                            navigator.clipboard.writeText(`https://cs2browser.net/banners/${serverid}/small.png`);
+                                            navigator.clipboard.writeText(`https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/small.png`);
                                             toast.success('Direct link copied!');
                                         }}
                                         className="bg-[#00feed] hover:bg-[#00feed]/80 text-black"
@@ -605,13 +606,13 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                     <input
                                         type="text"
                                         readOnly
-                                        value={`<a href="https://cs2browser.net/server/${serverid}"><img src="https://cs2browser.net/banners/${serverid}/small.png" alt="Server Banner" /></a>`}
+                                        value={`<a href="https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}"><img src="https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/small.png" alt="Server Banner" /></a>`}
                                         className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm font-mono"
                                     />
                                     <Button
                                         size="sm"
                                         onClick={() => {
-                                            navigator.clipboard.writeText(`<a href="https://cs2browser.net/server/${serverid}"><img src="https://cs2browser.net/banners/${serverid}/small.png" alt="Server Banner" /></a>`);
+                                            navigator.clipboard.writeText(`<a href="https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}"><img src="https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/small.png" alt="Server Banner" /></a>`);
                                             toast.success('HTML code copied!');
                                         }}
                                         className="bg-[#00feed] hover:bg-[#00feed]/80 text-black"
@@ -627,13 +628,13 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                     <input
                                         type="text"
                                         readOnly
-                                        value={`[url=https://cs2browser.net/server/${serverid}][img]https://cs2browser.net/banners/${serverid}/small.png[/img][/url]`}
+                                        value={`[url=https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}][img]https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/small.png[/img][/url]`}
                                         className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm font-mono"
                                     />
                                     <Button
                                         size="sm"
                                         onClick={() => {
-                                            navigator.clipboard.writeText(`[url=https://cs2browser.net/server/${serverid}][img]https://cs2browser.net/banners/${serverid}/small.png[/img][/url]`);
+                                            navigator.clipboard.writeText(`[url=https://${SiteSettings[SITE_VARIANT].domain}/server/${serverid}][img]https://${SiteSettings[SITE_VARIANT].domain}/banners/${serverid}/small.png[/img][/url]`);
                                             toast.success('BBCode copied!');
                                         }}
                                         className="bg-[#00feed] hover:bg-[#00feed]/80 text-black"

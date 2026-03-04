@@ -1,3 +1,5 @@
+import { SITE_VARIANT } from "../consts/settings";
+
 export interface APIEndpoint {
     path: string;
     method: string;
@@ -85,7 +87,7 @@ export const apiEndpoints: APIEndpoint[] = [
         path: "/api/servers",
         method: "GET",
         summary: "Get server list with filtering and pagination",
-        description: "Returns a paginated list of CS2 servers with comprehensive filtering options. Supports gamemode filtering, geographical filtering, ping filtering, player count filtering, and text search.\nThe pages are having 50 items.",
+        description: "Returns a paginated list of " + SITE_VARIANT.toUpperCase() + " servers with comprehensive filtering options. Supports gamemode filtering, geographical filtering, ping filtering, player count filtering, and text search.\nThe pages are having 50 items.",
         parameters: [
             {
                 name: "page",

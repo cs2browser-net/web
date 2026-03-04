@@ -1,12 +1,13 @@
 import PageLayout from "@/components/layouts/PageLayout";
 import FavouriteServersPage from "@/components/pages/FavouritesPage";
 import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 import { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
     ...defaultMetadata,
-    title: "Favorite Servers - CS2Browser.net",
-    description: "View your favorite Counter-Strike 2 servers. Quick access to your most played CS2 servers and communities.",
+    title: "Favorite Servers - " + SiteSettings[SITE_VARIANT].name,
+    description: "View your favorite " + SiteSettings[SITE_VARIANT].gamename + " servers. Quick access to your most played " + SiteSettings[SITE_VARIANT].gamename + " servers and communities.",
 }
 
 export const viewport: Viewport = defaultViewport

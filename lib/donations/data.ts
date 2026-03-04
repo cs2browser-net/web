@@ -12,6 +12,12 @@ export const costs = [
         description: "cs2browser.net domain registration"
     },
     {
+        service: "Domain Registration",
+        provider: "Cloudflare",
+        monthlyFee: "$2",
+        description: "csgoservers.net domain registration"
+    },
+    {
         service: "Cloudflare Pro",
         provider: "Cloudflare",
         monthlyFee: "$25",

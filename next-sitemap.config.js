@@ -14,9 +14,17 @@ const getAllGamemodeSlugs = () => {
     return [...new Set(allGamemodes)].map(gamemodeToSlug).filter(Boolean);
 };
 
+const SITE_VARIANT = (process.env.SITE_VARIANT ?? "cs2")
+
+const SiteSettings = {
+    cs2: {
+        url: "https://cs2browser.net"
+    }
+}
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-    siteUrl: "https://cs2browser.net",
+    siteUrl: SiteSettings[SITE_VARIANT].url,
     generateRobotsTxt: true,
     additionalPaths: async (config) => {
         const gamemodeSlugs = getAllGamemodeSlugs();

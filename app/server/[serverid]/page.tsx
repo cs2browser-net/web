@@ -5,6 +5,7 @@ import { Metadata, Viewport } from "next";
 import { prisma } from "@/lib/db/prisma";
 import { queryCache } from "@/lib/cache/query-cache";
 import { ServersQueryCacheTTL } from "@/lib/consts/servers";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 type Props = {
     params: Promise<{ serverid: string }>;
@@ -36,19 +37,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         if (!server) {
             return {
                 ...defaultMetadata,
-                title: "Server Not Found - CS2Browser.net",
+                title: "Server Not Found - " + SiteSettings[SITE_VARIANT].name,
             };
         }
 
         return {
             ...defaultMetadata,
-            title: `${server.serverData?.Hostname} - CS2Browser.net`,
+            title: `${server.serverData?.Hostname} - ${SiteSettings[SITE_VARIANT].name}`,
             description: `Join ${server.serverData?.Hostname} playing ${server.serverData?.Map}. Server IP: ${server.Address}. View detailed server information, player count, and connect directly.`,
         };
     } catch (error) {
         return {
             ...defaultMetadata,
-            title: "Server - CS2Browser.net",
+            title: "Server - " + SiteSettings[SITE_VARIANT].name,
         };
     }
 }

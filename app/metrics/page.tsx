@@ -1,12 +1,13 @@
 import PageLayout from "@/components/layouts/PageLayout";
 import { default as MetricsPageComponent } from "@/components/pages/MetricsPage";
 import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 import { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
     ...defaultMetadata,
-    title: "Metrics & Statistics - CS2Browser.net",
-    description: "View detailed statistics and metrics for Counter-Strike 2 servers. Track player counts, server trends, and CS2 community analytics.",
+    title: "Metrics & Statistics - " + SiteSettings[SITE_VARIANT].name,
+    description: "View detailed statistics and metrics for " + SiteSettings[SITE_VARIANT].gamename + " servers. Track player counts, server trends, and " + SiteSettings[SITE_VARIANT].gamename + " community analytics.",
 }
 
 export const viewport: Viewport = defaultViewport

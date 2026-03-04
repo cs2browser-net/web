@@ -3,6 +3,7 @@
 import { EndpointCard } from "@/components/docs/api/EndpointCard";
 import PageLayout from "@/components/layouts/PageLayout";
 import { apiEndpoints } from "@/lib/api/data";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 import { Code } from "lucide-react";
 
 export default function ApiDocsPage() {
@@ -15,7 +16,7 @@ export default function ApiDocsPage() {
                         API Documentation
                     </h1>
                     <p className="text-base md:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto px-4">
-                        Access CS2 server data programmatically with our comprehensive REST API.
+                        Access {SITE_VARIANT.toUpperCase()} server data programmatically with our comprehensive REST API.
                         Get server lists, detailed information, filters, and location data.
                     </p>
                 </div>
@@ -27,7 +28,7 @@ export default function ApiDocsPage() {
                     </h2>
                     <div className="space-y-4 text-gray-300 text-sm md:text-base">
                         <p>
-                            The CS2Browser.net API provides access to comprehensive CS2 server data including:
+                            The {SiteSettings[SITE_VARIANT].name} API provides access to comprehensive {SITE_VARIANT.toUpperCase()} server data including:
                         </p>
                         <ul className="list-disc list-inside space-y-2 ml-2 md:ml-4">
                             <li>Real-time server information and player counts</li>
@@ -37,7 +38,7 @@ export default function ApiDocsPage() {
                         </ul>
                         <div className="bg-gray-800/40 rounded-lg p-3 md:p-4 mt-4">
                             <h3 className="text-white font-medium mb-2 text-sm md:text-base">Base URL</h3>
-                            <code className="text-[#00feed] font-mono text-sm md:text-base break-all">https://cs2browser.net</code>
+                            <code className="text-[#00feed] font-mono text-sm md:text-base break-all">{SiteSettings[SITE_VARIANT].url}</code>
                         </div>
                     </div>
                 </div>

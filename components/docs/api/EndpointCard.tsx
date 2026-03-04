@@ -1,6 +1,7 @@
 "use client";
 
 import { APIEndpoint } from "@/lib/api/data";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 import { ChevronRight, Copy, Play } from "lucide-react";
 import { FC, useState } from "react";
 import { toast } from "sonner";
@@ -27,7 +28,7 @@ export const EndpointCard: FC<{ endpoint: APIEndpoint }> = ({ endpoint }) => {
     };
 
     const tryItOut = () => {
-        const baseUrl = 'https://cs2browser.net';
+        const baseUrl = SiteSettings[SITE_VARIANT].url;
         const fullUrl = `${baseUrl}${endpoint.path}`;
         window.open(fullUrl, '_blank');
     };

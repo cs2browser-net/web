@@ -1,3 +1,5 @@
+import { SITE_VARIANT } from "@/lib/consts/settings";
+
 export default function Legend() {
     return (
         <div className="p-4 md:p-6">
@@ -26,7 +28,7 @@ export default function Legend() {
                     <div>
                         <div className="text-white font-medium text-sm">Total Players</div>
                         <div className="text-gray-400 text-xs">
-                            Total number of players across all active CS2 servers
+                            Total number of players across all active {SITE_VARIANT.toUpperCase()} servers
                         </div>
                     </div>
                 </div>

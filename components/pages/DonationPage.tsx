@@ -1,11 +1,12 @@
 import { costs, totalMaxCost, totalMinCost } from "@/lib/donations/data";
 import { Card } from "../ui/card";
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 export default function DonationPage() {
     return (
         <div>
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-semibold mb-4">Support CS2Browser.net</h1>
+                <h1 className="text-3xl font-semibold mb-4">Support {SiteSettings[SITE_VARIANT].name}</h1>
                 <p className="text-lg text-muted-foreground mb-6">
                     Help us keep the Counter-Strike 2 server browser running and continuously improve the service for the community.
                 </p>
@@ -16,7 +17,7 @@ export default function DonationPage() {
                     <Card className="p-6">
                         <h2 className="text-2xl font-semibold mb-4">Make a Donation</h2>
                         <p className="text-muted-foreground">
-                            Your support helps us cover server costs and maintain this free service for the CS2 community.
+                            Your support helps us cover server costs and maintain this free service for the {SITE_VARIANT.toUpperCase()} community.
                         </p>
 
                         <div className="border-gray-900 rounded-lg text-center">
@@ -101,7 +102,7 @@ export default function DonationPage() {
                     <Card className="p-6">
                         <h3 className="text-xl font-semibold mb-3">Thank You!</h3>
                         <p className="text-muted-foreground">
-                            Every donation, no matter the size, helps us maintain and improve CS2Browser.net.
+                            Every donation, no matter the size, helps us maintain and improve {SiteSettings[SITE_VARIANT].name}.
                             We{"'"}re grateful for your support and for being part of our community.
                         </p>
                     </Card>

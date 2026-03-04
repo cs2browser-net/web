@@ -1,3 +1,4 @@
+import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 import { Mail, MessageCircle } from "lucide-react";
 
 export const renderTextWithLinks = (text: string) => {
@@ -27,8 +28,8 @@ export const contactMethods = [
         icon: <Mail className="w-6 h-6" />,
         title: "Email Support",
         description: "Get in touch with our team for general inquiries and support",
-        contact: "contact@cs2browser.net",
-        action: "mailto:contact@cs2browser.net",
+        contact: "contact@" + SiteSettings[SITE_VARIANT].domain,
+        action: "mailto:contact@" + SiteSettings[SITE_VARIANT].domain,
         actionText: "Send Email"
     },
     {
@@ -36,7 +37,7 @@ export const contactMethods = [
         title: "Discord Community",
         description: "Join our community for real-time discussions and updates",
         contact: "Discord Server",
-        action: "https://cs2browser.net/discord",
+        action: "https://" + SiteSettings[SITE_VARIANT].domain + "/discord",
         actionText: "Join Server"
     }
 ];
