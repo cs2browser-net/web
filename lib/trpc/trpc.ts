@@ -5,6 +5,7 @@ import { GetClientIP } from "../utils/ip";
 
 export async function createContext() {
     const h = await headers();
+    console.log(h)
 
     return {
         ip: GetClientIP(h as unknown as Record<string, string>)

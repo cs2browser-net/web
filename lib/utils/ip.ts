@@ -9,7 +9,7 @@ export function GetClientIP(headers: Record<string, string>) {
         "127.0.0.1";
 
     if (ip == "127.0.0.1" || ip == "::1") {
-        return "89.40.130.64";
+        return "0.0.0.0";
     }
 
     return ip;
