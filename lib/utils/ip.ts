@@ -3,6 +3,8 @@ import { Location } from "../location/store";
 
 export function GetClientIP(headers: Record<string, string>) {
     let ip = "127.0.0.1";
+    console.log(headers)
+    console.log(headers["cf-connecting-ip"])
     if (headers.hasOwnProperty("cf-connecting-ip")) {
         ip = headers["cf-connecting-ip"];
     }
