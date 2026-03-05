@@ -20,16 +20,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         };
     }
 
-    const gamemodeName = typeof spec.text === 'string'
-        ? spec.text
-        : spec.text[0].toString().replace(/_$/, '');
-
-    const formattedName = gamemodeName.charAt(0).toUpperCase() + gamemodeName.slice(1);
+    const gamemodeName = spec.name;
 
     return {
         ...defaultMetadata,
-        title: `${formattedName} Servers - ${SiteSettings[SITE_VARIANT].name}`,
-        description: `Find the best ${SiteSettings[SITE_VARIANT].gamename} ${formattedName} servers. Browse and join ${SiteSettings[SITE_VARIANT].gamename} ${formattedName} servers by location, ping, and player count.`,
+        title: `${gamemodeName} Servers - ${SiteSettings[SITE_VARIANT].name}`,
+        description: `Find the best ${SiteSettings[SITE_VARIANT].gamename} ${gamemodeName} servers. Browse and join ${SiteSettings[SITE_VARIANT].gamename} ${gamemodeName} servers by location, ping, and player count.`,
     };
 }
 

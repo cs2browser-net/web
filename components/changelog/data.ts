@@ -25,6 +25,26 @@ export const changelog: ChangelogEntry[] = [
             feature: [
                 {
                     type: 'feature',
+                    title: 'CSGO Server Browser',
+                    description: 'Added CSGO Server Browser at https://csgoservers.net with comprehensive server listing, advanced filtering, and real-time data.',
+                    details: []
+                }
+            ],
+            bugfix: [
+                {
+                    type: 'bugfix',
+                    title: "Gamemode names",
+                    description: "Fixed gamemode names appearing incorrectly in titles.",
+                }
+            ]
+        }
+    },
+    {
+        date: '2026-03-02',
+        changes: {
+            feature: [
+                {
+                    type: 'feature',
                     title: 'Rework',
                     description: 'Reworked the design of the website and the performance.',
                     details: []
