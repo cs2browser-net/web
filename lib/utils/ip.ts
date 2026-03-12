@@ -19,11 +19,11 @@ export function GetLocation(ip: string): Location {
     if (ip.includes(":")) {
         const info = mmdbv6.get(ip)
         // @ts-expect-error wrong info
-        return { latitude: info?.latitude || 0.0, longitude: info?.longitude || 0.0 }
+        return { latitude: info?.latitude || 0.0, longitude: info?.longitude || 0.0, countryCode: info?.country_code.toLowerCase() || "ro" }
     } else {
         const info = mmdbv4.get(ip)
         // @ts-expect-error wrong info
-        return { latitude: info?.latitude || 0.0, longitude: info?.longitude || 0.0 }
+        return { latitude: info?.latitude || 0.0, longitude: info?.longitude || 0.0, countryCode: info?.country_code.toLowerCase() || "ro" }
     }
 }
 

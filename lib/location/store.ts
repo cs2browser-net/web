@@ -3,6 +3,7 @@ import { create } from "zustand";
 export interface Location {
     latitude: number;
     longitude: number;
+    countryCode: string;
 }
 
 interface LocationState {
