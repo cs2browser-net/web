@@ -1,32 +1,30 @@
 import { queryCache } from "@/lib/cache/query-cache";
 import { publicProcedure, router } from "../trpc";
-import { prisma } from "@/lib/db/prisma";
 import { ServersQueryCacheTTL } from "@/lib/consts/servers";
 import { getName } from 'country-list'
 import { continentNames, countryToContinent } from "@/lib/location/mappings";
+import { db } from "@/lib/db/drizzle";
+import { server, serverData } from "@/generated/drizzle/schema";
+import { and, count, desc, eq, isNotNull } from "drizzle-orm";
 
 export const filtersRouter = router({
     getFilters: publicProcedure.query(async (data) => {
         const countryRows = await queryCache.query(
             'countries:count',
             async () => {
-                return await prisma.server.groupBy({
-                    by: "Country",
-                    where: {
-                        Status: 0,
-                        LastUpdated: {
-                            not: null
-                        }
-                    },
-                    _count: {
-                        Country: true
-                    },
-                    orderBy: {
-                        _count: {
-                            Country: 'desc'
-                        }
-                    }
-                });
+                const groups = await db.select({
+                    country: server.country,
+                    countryCount: count(server.country)
+                }).from(server)
+                    .where(
+                        and(
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    ).groupBy(server.country)
+                    .orderBy(desc(count(server.country)));
+
+                return groups;
             },
             ServersQueryCacheTTL
         );
@@ -34,25 +32,20 @@ export const filtersRouter = router({
         const versionRows = await queryCache.query(
             'versions:count',
             async () => {
-                return await prisma.serverData.groupBy({
-                    by: "Version",
-                    where: {
-                        server: {
-                            Status: 0,
-                            LastUpdated: {
-                                not: null
-                            }
-                        }
-                    },
-                    _count: {
-                        Version: true
-                    },
-                    orderBy: {
-                        _count: {
-                            Version: 'desc'
-                        }
-                    }
-                });
+                const groups = await db.select({
+                    version: serverData.version,
+                    versionCount: count(serverData.version)
+                }).from(serverData)
+                    .leftJoin(server, eq(server.id, serverData.serverId))
+                    .where(
+                        and(
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    ).groupBy(serverData.version)
+                    .orderBy(desc(count(serverData.version)));
+
+                return groups;
             },
             ServersQueryCacheTTL
         );
@@ -60,25 +53,20 @@ export const filtersRouter = router({
         const mapRows = await queryCache.query(
             'maps:count',
             async () => {
-                return await prisma.serverData.groupBy({
-                    by: "Map",
-                    where: {
-                        server: {
-                            Status: 0,
-                            LastUpdated: {
-                                not: null
-                            }
-                        }
-                    },
-                    _count: {
-                        Map: true
-                    },
-                    orderBy: {
-                        _count: {
-                            Map: 'desc'
-                        }
-                    }
-                });
+                const groups = await db.select({
+                    map: serverData.map,
+                    mapCount: count(serverData.map)
+                }).from(serverData)
+                    .leftJoin(server, eq(server.id, serverData.serverId))
+                    .where(
+                        and(
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    ).groupBy(serverData.map)
+                    .orderBy(desc(count(serverData.map)));
+
+                return groups;
             },
             ServersQueryCacheTTL
         );
@@ -87,17 +75,17 @@ export const filtersRouter = router({
         const continentCounts: Record<string, number> = {}
 
         for (const country of countryRows) {
-            const countryName = getName(country.Country);
-            const continent = countryToContinent[country.Country.toLowerCase()];
+            const countryName = getName(country.country);
+            const continent = countryToContinent[country.country.toLowerCase()];
 
-            countries[country.Country] = {
-                name: `${countryName} (${country._count.Country})`,
-                count: country._count.Country,
+            countries[country.country] = {
+                name: `${countryName} (${country.countryCount})`,
+                count: country.countryCount,
                 continent: continent
             };
 
             if (continent) {
-                continentCounts[continent] = (continentCounts[continent] || 0) + country._count.Country;
+                continentCounts[continent] = (continentCounts[continent] || 0) + country.countryCount;
             }
         }
 
@@ -107,10 +95,10 @@ export const filtersRouter = router({
         }
 
         const maps: Record<string, any> = {}
-        for (const map of mapRows) maps[map.Map] = `${map.Map} (${map._count.Map})`;
+        for (const map of mapRows) maps[map.map] = `${map.map} (${map.mapCount})`;
 
         const versions: Record<string, any> = {}
-        for (const version of versionRows) versions[version.Version] = `${version.Version} (${version._count.Version})`;
+        for (const version of versionRows) versions[version.version] = `${version.version} (${version.versionCount})`;
 
         return {
             continents,

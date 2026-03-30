@@ -46,7 +46,7 @@ export const EndpointCard: FC<{ endpoint: APIEndpoint }> = ({ endpoint }) => {
                         </span>
                         <code className="text-[#00feed] font-mono text-sm sm:text-lg break-all">{endpoint.path}</code>
                     </div>
-                    <div className="flex items-center justify-between sm:justify-end space-x-2 flex-shrink-0">
+                    <div className="flex items-center justify-between sm:justify-end space-x-2 shrink-0">
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -105,7 +105,7 @@ export const EndpointCard: FC<{ endpoint: APIEndpoint }> = ({ endpoint }) => {
                                                     </span>
                                                 </td>
                                                 <td className="py-3 text-gray-300 text-sm leading-relaxed">
-                                                    <div className="break-words">
+                                                    <div className="wrap-break-word">
                                                         {param.description}
                                                         {param.example !== undefined && (
                                                             <div className="mt-2 p-2 bg-gray-800/50 rounded">

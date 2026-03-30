@@ -2,10 +2,12 @@ import PageLayout from "@/components/layouts/PageLayout";
 import ServerPage from "@/components/pages/ServerPage";
 import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
 import { Metadata, Viewport } from "next";
-import { prisma } from "@/lib/db/prisma";
 import { queryCache } from "@/lib/cache/query-cache";
 import { ServersQueryCacheTTL } from "@/lib/consts/servers";
 import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
+import { db } from "@/lib/db/drizzle";
+import { playersData, server, serverData } from "@/generated/drizzle/schema";
+import { and, eq, isNotNull } from "drizzle-orm";
 
 type Props = {
     params: Promise<{ serverid: string }>;
@@ -15,26 +17,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { serverid } = await params;
 
     try {
-        const server = await queryCache.query(
+        const srv = await queryCache.query(
             `servers:${serverid}`,
             async () => {
-                return await prisma.server.findFirst({
-                    where: {
-                        ID: serverid,
-                        Status: 0,
-                        LastUpdated: {
-                            not: null
-                        }
-                    },
-                    include: {
-                        serverData: true
-                    }
-                });
+                var servers = await db.select().from(server)
+                    .leftJoin(serverData, eq(server.id, serverData.serverId))
+                    .leftJoin(playersData, eq(server.id, playersData.serverId))
+                    .where(
+                        and(
+                            eq(server.id, serverid),
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    ).limit(1);
+
+                if (servers.length === 0) return null;
+                return servers[0];
             },
             ServersQueryCacheTTL
         );
 
-        if (!server) {
+        if (!srv) {
             return {
                 ...defaultMetadata,
                 title: "Server Not Found - " + SiteSettings[SITE_VARIANT].name,
@@ -43,8 +46,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
         return {
             ...defaultMetadata,
-            title: `${server.serverData?.Hostname} - ${SiteSettings[SITE_VARIANT].name}`,
-            description: `Join ${server.serverData?.Hostname} playing ${server.serverData?.Map}. Server IP: ${server.Address}. View detailed server information, player count, and connect directly.`,
+            title: `${srv.ServerData?.hostname} - ${SiteSettings[SITE_VARIANT].name}`,
+            description: `Join ${srv.ServerData?.hostname} playing ${srv.ServerData?.map}. Server IP: ${srv.Server.address}. View detailed server information, player count, and connect directly.`,
         };
     } catch (error) {
         return {

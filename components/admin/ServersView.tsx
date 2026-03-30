@@ -90,58 +90,58 @@ export default function ServersView({ password }: ServersViewProps) {
                                         <div className="space-y-1 text-sm">
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">ID</span>
-                                                <span className="font-mono text-xs">{server.ID}</span>
+                                                <span className="font-mono text-xs">{server.Server.id}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">Address</span>
-                                                <span className="font-mono">{server.Address}</span>
+                                                <span className="font-mono">{server.Server.address}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">Country</span>
-                                                <span>{server.Country}</span>
+                                                <span>{server.Server.country}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">Status</span>
-                                                <span className="font-mono">{server.Status}</span>
+                                                <span className="font-mono">{server.Server.status}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">Last Updated</span>
-                                                <span>{server.LastUpdated ? new Date(server.LastUpdated).toLocaleString() : "Never"}</span>
+                                                <span>{server.Server.lastUpdated ? new Date(server.Server.lastUpdated).toLocaleString() : "Never"}</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {server.serverData && (
+                                    {server.ServerData && (
                                         <div className="space-y-3">
                                             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Server Data</h3>
                                             <div className="space-y-1 text-sm">
                                                 <div className="flex justify-between">
                                                     <span className="text-muted-foreground">Hostname</span>
-                                                    <span className="truncate max-w-[60%]">{server.serverData.Hostname}</span>
+                                                    <span className="truncate max-w-[60%]">{server.ServerData.hostname}</span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-muted-foreground">Map</span>
-                                                    <span>{server.serverData.Map}</span>
+                                                    <span>{server.ServerData.map}</span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-muted-foreground">Players</span>
-                                                    <span>{server.serverData.PlayersCount} / {server.serverData.MaxPlayers}</span>
+                                                    <span>{server.ServerData.playersCount} / {server.ServerData.maxPlayers}</span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-muted-foreground">Bots</span>
-                                                    <span>{server.serverData.BotsCount}</span>
+                                                    <span>{server.ServerData.botsCount}</span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-muted-foreground">Version</span>
-                                                    <span className="font-mono text-xs">{server.serverData.Version}</span>
+                                                    <span className="font-mono text-xs">{server.ServerData.version}</span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-muted-foreground">Secure</span>
-                                                    <span className={server.serverData.Secure ? "text-green-400" : "text-red-400"}>{server.serverData.Secure ? "Yes" : "No"}</span>
+                                                    <span className={server.ServerData.secure ? "text-green-400" : "text-red-400"}>{server.ServerData.secure ? "Yes" : "No"}</span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-muted-foreground">Tags</span>
-                                                    <span className="text-xs truncate max-w-[60%]">{server.serverData.Tags || "—"}</span>
+                                                    <span className="text-xs truncate max-w-[60%]">{server.ServerData.tags || "—"}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -154,7 +154,7 @@ export default function ServersView({ password }: ServersViewProps) {
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            onClick={() => recheckMutation.mutate({ password, serverId: server.ID })}
+                                            onClick={() => recheckMutation.mutate({ password, serverId: server.Server.id })}
                                             disabled={isMutating}
                                         >
                                             Recheck
@@ -162,7 +162,7 @@ export default function ServersView({ password }: ServersViewProps) {
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            onClick={() => hideMutation.mutate({ password, serverId: server.ID })}
+                                            onClick={() => hideMutation.mutate({ password, serverId: server.Server.id })}
                                             disabled={isMutating}
                                         >
                                             Hide
@@ -178,7 +178,7 @@ export default function ServersView({ password }: ServersViewProps) {
                                             />
                                             <Button
                                                 size="sm"
-                                                onClick={() => setStatusMutation.mutate({ password, serverId: server.ID, status: newStatus })}
+                                                onClick={() => setStatusMutation.mutate({ password, serverId: server.Server.id, status: newStatus })}
                                                 disabled={isMutating}
                                             >
                                                 Set Status

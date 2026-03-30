@@ -38,7 +38,7 @@ export default function DesktopHeader() {
                     <NavigationMenuItem key={key}>
                         <NavigationMenuTrigger>{category.title}</NavigationMenuTrigger>
                         <NavigationMenuContent>
-                            <ul className="grid w-[300px] gap-3 p-4 md:w-[350px] md:grid-cols-1 lg:w-[400px]">
+                            <ul className="grid w-75 gap-3 p-4 md:w-87.5 md:grid-cols-1 lg:w-100">
                                 {category.routes.map((item) => (
                                     <ListItem
                                         key={item.href}

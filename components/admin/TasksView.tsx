@@ -67,20 +67,20 @@ export default function TasksView({ password }: TasksViewProps) {
                             </thead>
                             <tbody>
                                 {tasks.map((task) => {
-                                    const taskData = task.TaskData as any;
+                                    const taskData = task.taskData as any;
                                     return (
-                                        <tr key={task.ID} className="border-b border-gray-700/30 hover:bg-gray-800/30">
-                                            <td className="py-3 px-4 font-mono text-xs">{task.ID.slice(0, 8)}...</td>
+                                        <tr key={task.id} className="border-b border-gray-700/30 hover:bg-gray-800/30">
+                                            <td className="py-3 px-4 font-mono text-xs">{task.id.slice(0, 8)}...</td>
                                             <td className="py-3 px-4">
-                                                <span className={`px-2 py-1 rounded text-xs ${task.TaskKind === 1 ? "bg-blue-500/20 text-blue-400" :
-                                                    task.TaskKind === 2 ? "bg-red-500/20 text-red-400" :
+                                                <span className={`px-2 py-1 rounded text-xs ${task.taskKind === 1 ? "bg-blue-500/20 text-blue-400" :
+                                                    task.taskKind === 2 ? "bg-red-500/20 text-red-400" :
                                                         "bg-gray-500/20 text-gray-400"
                                                     }`}>
-                                                    {task.TaskKind === 1 ? "Add Servers" : task.TaskKind === 2 ? "Report Server" : `Type ${task.TaskKind}`}
+                                                    {task.taskKind === 1 ? "Add Servers" : task.taskKind === 2 ? "Report Server" : `Type ${task.taskKind}`}
                                                 </span>
                                             </td>
                                             <td className="py-3 px-4">
-                                                {task.TaskKind === 1 ? (
+                                                {task.taskKind === 1 ? (
                                                     <div className="space-y-1 text-xs">
                                                         <div className="font-semibold text-blue-400">Servers ({taskData.servers?.length || 0}):</div>
                                                         <div className="space-y-0.5 max-h-32 overflow-y-auto">
@@ -95,7 +95,7 @@ export default function TasksView({ password }: TasksViewProps) {
                                                             Time: {new Date(taskData.timestamp).toLocaleString()}
                                                         </div>
                                                     </div>
-                                                ) : task.TaskKind === 2 ? (
+                                                ) : task.taskKind === 2 ? (
                                                     <div className="space-y-1 text-xs">
                                                         <div className="font-semibold text-red-400">Server ID:</div>
                                                         <div className="font-mono text-gray-300">{taskData.serverId}</div>
@@ -115,23 +115,23 @@ export default function TasksView({ password }: TasksViewProps) {
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <pre className="text-xs max-w-md overflow-x-auto">{JSON.stringify(task.TaskData, null, 2)}</pre>
+                                                    <pre className="text-xs max-w-md overflow-x-auto">{JSON.stringify(task.taskData, null, 2)}</pre>
                                                 )}
                                             </td>
                                             <td className="py-3 px-4">
-                                                {task.TaskExecuted === 0 ? (
+                                                {task.taskExecuted === 0 ? (
                                                     <div className="flex gap-2">
                                                         <Button
                                                             size="xs"
-                                                            onClick={() => handleApprove(task.ID)}
+                                                            onClick={() => handleApprove(task.id)}
                                                             disabled={approveMutation.isPending || rejectMutation.isPending}
                                                         >
-                                                            {task.TaskKind === 1 ? "Approve" : "Hide"}
+                                                            {task.taskKind === 1 ? "Approve" : "Hide"}
                                                         </Button>
                                                         <Button
                                                             size="xs"
                                                             variant="destructive"
-                                                            onClick={() => handleReject(task.ID)}
+                                                            onClick={() => handleReject(task.id)}
                                                             disabled={approveMutation.isPending || rejectMutation.isPending}
                                                         >
                                                             Reject

@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 import { IsIpInSubnet } from "@/lib/utils/ip";
-import { prisma } from "@/lib/db/prisma";
 import { checkRateLimit } from "@/lib/utils/rate-limit";
 import { TRPCError } from "@trpc/server";
+import { db } from "@/lib/db/drizzle";
+import { tasks } from "@/generated/drizzle/schema";
 
 const RATE_LIMIT_ADD_SERVERS = 60;
 const RATE_LIMIT_REPORT_SERVER = 60;
@@ -76,14 +77,13 @@ export const tasksRouter = router({
             maxCount: MAX_COUNT_PER_WINDOW
         });
 
-        await prisma.tasks.create({
-            data: {
-                TaskKind: 1,
-                TaskData: {
-                    servers: serverList,
-                    submittedBy: data.ctx.ip,
-                    timestamp: new Date().toISOString()
-                }
+        await db.insert(tasks).values({
+            id: crypto.randomUUID(),
+            taskKind: 1,
+            taskData: {
+                servers: serverList,
+                submittedBy: data.ctx.ip,
+                timestamp: new Date().toISOString()
             }
         })
 
@@ -103,16 +103,15 @@ export const tasksRouter = router({
 
         const { serverId, reason, details } = data.input;
 
-        await prisma.tasks.create({
-            data: {
-                TaskKind: 2,
-                TaskData: {
-                    serverId,
-                    reason,
-                    details,
-                    submittedBy: data.ctx.ip,
-                    timestamp: new Date().toISOString()
-                }
+        await db.insert(tasks).values({
+            id: crypto.randomUUID(),
+            taskKind: 2,
+            taskData: {
+                serverId,
+                reason,
+                details,
+                submittedBy: data.ctx.ip,
+                timestamp: new Date().toISOString()
             }
         })
 

@@ -96,7 +96,7 @@ export default function AddServer() {
                                 placeholder="192.168.1.1:27015, 10.0.0.1:27016 203.0.113.1:27017"
                                 value={serverInput}
                                 onChange={(e) => setServerInput(e.target.value)}
-                                className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 min-h-[120px] resize-none"
+                                className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 min-h-30 resize-none"
                                 disabled={isSubmitting}
                             />
                             <p className="text-xs text-gray-400 mt-2">

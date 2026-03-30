@@ -1,11 +1,8 @@
 "use client";
 
 import { trpc } from "@/lib/trpc/client";
-import { JsonObject } from "@prisma/client/runtime/client";
 import { useMemo, useState } from "react";
 import LoadingState from "../metrics/LoadingState";
-import ModeChanger from "../metrics/ModeChanger";
-import Legend from "../metrics/Legend";
 import Charts from "../metrics/Charts";
 import Informations from "../metrics/Informations";
 
@@ -19,7 +16,7 @@ export default function MetricsPage() {
     const chartData = useMemo(() => {
         if (!data) return [];
 
-        const checkedEntries = Object.entries(data.checked as JsonObject) as unknown as Record<string, number>[];
+        const checkedEntries = Object.entries(data.checked as any) as unknown as Record<string, number>[];
         return checkedEntries.map((record) => {
             // @ts-expect-error
             const [timestamp, checkedValue] = record;

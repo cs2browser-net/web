@@ -1,16 +1,16 @@
 "use client";
 
-import { Server, ServerData } from "@/generated/prisma/browser";
 import ServerHeader from "./ServerHeader";
 import ServerRow from "./ServerRow";
 import LoadingState from "./LoadingState";
 import EmptyState from "./EmptyState";
 import { ServersPerPage } from "@/lib/consts/servers";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
+import { ServerAndServerData } from "@/lib/api/data";
 
 interface ServerListProps {
     servers?: {
-        servers: (({ server: Server }) & ServerData)[];
+        servers: ServerAndServerData[];
         count: number;
     };
     currentPage: number;
@@ -110,7 +110,7 @@ export default function ServerList({ servers, currentPage, onPageChange, pageKin
             <ServerHeader />
             <div className="mt-2 gap-2 flex flex-col">
                 {servers.servers.map((server, index) => (
-                    <ServerRow key={server.ServerID} isEven={index % 2 === 0} server={server} />
+                    <ServerRow key={server.Server.id} isEven={index % 2 === 0} server={server} />
                 ))}
             </div>
             {pageKind == "server-list" && servers.count > 0 && totalPages > 1 && (

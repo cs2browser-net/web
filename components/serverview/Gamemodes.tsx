@@ -48,7 +48,7 @@ export default function Gamemodes({ gamemode }: { gamemode?: string }) {
                                 variant="ghost"
                                 onClick={() => setShowAll(!showAll)}
                                 className={`
-                    h-10 md:h-12 px-4 md:px-6 rounded-lg transition-all duration-200 border-2 text-xs md:text-sm font-medium w-full md:w-auto md:min-w-[110px] cursor-pointer
+                    h-10 md:h-12 px-4 md:px-6 rounded-lg transition-all duration-200 border-2 text-xs md:text-sm font-medium w-full md:w-auto md:min-w-27.5 cursor-pointer
                     bg-gray-800/60 hover:bg-gray-700/80 text-white border-gray-700/50 hover:border-gray-600
                   `}
                             >
@@ -66,7 +66,7 @@ export default function Gamemodes({ gamemode }: { gamemode?: string }) {
                                         key={category}
                                         variant="ghost"
                                         className={`
-                                        h-10 md:h-12 px-2 md:px-6 rounded-lg transition-all duration-200 border-2 text-xs md:text-sm font-medium md:min-w-[110px] cursor-pointer
+                                        h-10 md:h-12 px-2 md:px-6 rounded-lg transition-all duration-200 border-2 text-xs md:text-sm font-medium md:min-w-27.5 cursor-pointer
                                         ${gamemode === gamemodeToSlug(category)
                                                 ? 'bg-[#00feed] hover:bg-[#00d4c7] text-black border-[#00feed] shadow-lg shadow-[#00feed]/20'
                                                 : 'bg-gray-800/60 hover:bg-gray-700/80 text-white border-gray-700/50 hover:border-gray-600'
@@ -84,7 +84,7 @@ export default function Gamemodes({ gamemode }: { gamemode?: string }) {
                                 variant="ghost"
                                 onClick={() => setShowAll(!showAll)}
                                 className={`
-                    h-10 md:h-12 px-4 md:px-6 rounded-lg transition-all duration-200 border-2 text-xs md:text-sm font-medium w-full md:w-auto md:min-w-[110px] cursor-pointer
+                    h-10 md:h-12 px-4 md:px-6 rounded-lg transition-all duration-200 border-2 text-xs md:text-sm font-medium w-full md:w-auto md:min-w-27.5 cursor-pointer
                     ${showAll
                                         ? 'bg-[#00feed] hover:bg-[#00d4c7] text-black border-[#00feed] shadow-lg shadow-[#00feed]/20'
                                         : 'bg-gray-800/60 hover:bg-gray-700/80 text-white border-gray-700/50 hover:border-gray-600'

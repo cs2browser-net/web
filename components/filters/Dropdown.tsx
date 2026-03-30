@@ -140,7 +140,7 @@ const FilterDropdown = memo(function FilterDropdown({ items, filters, filterType
     const dropdownContent = isOpen && dropdownPosition && (
         <>
             <div
-                className="fixed z-[9999] bg-gray-800 border border-gray-700 rounded-lg shadow-xl max-h-96 overflow-hidden flex flex-col"
+                className="fixed z-9999 bg-gray-800 border border-gray-700 rounded-lg shadow-xl max-h-96 overflow-hidden flex flex-col"
                 style={{
                     top: dropdownPosition.top,
                     left: dropdownPosition.left,
@@ -180,14 +180,14 @@ const FilterDropdown = memo(function FilterDropdown({ items, filters, filterType
                                     onClick={() => {
                                         handleItemClick(item.code, status);
                                     }}
-                                    className="w-full px-4 py-2 text-left hover:bg-gray-700/50 flex items-center justify-between transition-colors min-h-[44px]"
+                                    className="w-full px-4 py-2 text-left hover:bg-gray-700/50 flex items-center justify-between transition-colors min-h-11"
                                 >
                                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                                         {getStatusIcon(status)}
                                         <span className="text-white truncate">{item.name}</span>
                                     </div>
                                     {(filterType === 'pings' || filterType === 'continents' || filterType === 'countries' || filterType === 'maps' || filterType === 'versions') && (
-                                        <span className={`text-xs px-2 py-1 rounded-full font-medium flex-shrink-0 ml-2 ${status === 'show' ? 'bg-green-600 text-white' :
+                                        <span className={`text-xs px-2 py-1 rounded-full font-medium shrink-0 ml-2 ${status === 'show' ? 'bg-green-600 text-white' :
                                             status === 'hide' ? 'bg-red-600 text-white' :
                                                 'bg-gray-600 text-gray-300'
                                             }`}>
@@ -201,7 +201,7 @@ const FilterDropdown = memo(function FilterDropdown({ items, filters, filterType
                 </div>
             </div>
             <div
-                className="fixed inset-0 z-[9998]"
+                className="fixed inset-0 z-9998"
                 onClick={() => setIsOpen(false)}
             />
         </>

@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { createCanvas, registerFont } from 'canvas';
 import { queryCache } from "@/lib/cache/query-cache";
 import { bannerCache } from "@/lib/cache/banner-cache";
-import { prisma } from "@/lib/db/prisma";
 import { ServersQueryCacheTTL } from "@/lib/consts/servers";
 import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
+import { db } from "@/lib/db/drizzle";
+import { playersData, server, serverData } from "@/generated/drizzle/schema";
+import { and, eq, isNotNull } from "drizzle-orm";
 
 registerFont("./lib/fonts/arial.ttf", { family: "ArlMd" })
 
@@ -120,22 +122,22 @@ function makeBanner(opts: any) {
 export async function GET(req: Request, { params }: { params: Promise<{ serverid: string }> }) {
     const { serverid } = await params;
 
-    const server = await queryCache.query(
+    const srv = await queryCache.query(
         `servers:${serverid}`,
         async () => {
-            return await prisma.server.findFirst({
-                where: {
-                    ID: serverid,
-                    Status: 0,
-                    LastUpdated: {
-                        not: null
-                    }
-                },
-                include: {
-                    serverData: true,
-                    playersData: true
-                }
-            });
+            var servers = await db.select().from(server)
+                .leftJoin(serverData, eq(server.id, serverData.serverId))
+                .leftJoin(playersData, eq(server.id, playersData.serverId))
+                .where(
+                    and(
+                        eq(server.id, serverid),
+                        eq(server.status, 0),
+                        isNotNull(server.lastUpdated)
+                    )
+                ).limit(1);
+
+            if (servers.length === 0) return null;
+            return servers[0];
         },
         ServersQueryCacheTTL
     );
@@ -154,16 +156,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ serverid
                 history: []
             };
 
-            if (server?.serverData) {
-                bannerData.name = server.serverData.Hostname || "Unknown Server";
-                bannerData.ip = server.Address.split(":")[0] || "Unknown";
-                bannerData.port = server.Address.split(":")[1] || "Unknown";
+            if (srv?.ServerData) {
+                bannerData.name = srv.ServerData.hostname || "Unknown Server";
+                bannerData.ip = srv.Server.address.split(":")[0] || "Unknown";
+                bannerData.port = srv.Server.address.split(":")[1] || "Unknown";
                 bannerData.status = "online";
-                bannerData.map = server.serverData.Map || "Unknown";
-                bannerData.players = server.serverData.PlayersCount || 0;
-                bannerData.maxPlayers = server.serverData.MaxPlayers || 0;
+                bannerData.map = srv.ServerData.map || "Unknown";
+                bannerData.players = srv.ServerData.playersCount || 0;
+                bannerData.maxPlayers = srv.ServerData.maxPlayers || 0;
                 // @ts-expect-error
-                bannerData.history = Object.keys(server.playersData?.MaxLast24Hours!).sort().map(timestamp => server.playersData?.MaxLast24Hours![timestamp] || 0) || [];
+                bannerData.history = Object.keys(srv.PlayersData?.maxLast24Hours!).sort().map(timestamp => srv.PlayersData?.maxLast24Hours![timestamp] || 0) || [];
             }
 
             return makeBanner(bannerData);

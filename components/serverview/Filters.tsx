@@ -166,7 +166,7 @@ export default function Filters({ isOpen }: FiltersProps) {
     return (
         <div
             className={`
-                flex-shrink-0 transition-all duration-300 ease-in-out 
+                shrink-0 transition-all duration-300 ease-in-out 
                 ${isOpen
                     ? 'opacity-100 translate-x-0 w-80 ml-2'
                     : 'opacity-0 translate-x-8 w-0 ml-0 overflow-hidden'

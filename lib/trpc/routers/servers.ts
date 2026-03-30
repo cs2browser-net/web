@@ -1,5 +1,4 @@
 import { ServersPerPage, ServersQueryCacheTTL } from "@/lib/consts/servers";
-import { prisma } from "@/lib/db/prisma";
 import { publicProcedure, router } from "@/lib/trpc/trpc";
 import { GetLocation } from "@/lib/utils/ip";
 import { queryCache } from "@/lib/cache/query-cache";
@@ -7,6 +6,9 @@ import { z } from 'zod'
 import { EstimatePing } from "@/lib/location/ping";
 import { countryToContinent } from "@/lib/location/mappings";
 import { GetServersByGamemode } from "@/lib/filters/gamemodes";
+import { playersData, server, serverData } from "@/generated/drizzle/schema";
+import { db } from "@/lib/db/drizzle";
+import { and, eq, isNotNull } from "drizzle-orm";
 
 export const serversRouter = router({
     fetchServersWithId: publicProcedure.input(
@@ -17,24 +19,21 @@ export const serversRouter = router({
         const servers = await queryCache.query(
             'servers:all',
             async () => {
-                return await prisma.serverData.findMany({
-                    where: {
-                        server: {
-                            Status: 0,
-                            LastUpdated: {
-                                not: null
-                            }
-                        }
-                    },
-                    include: {
-                        server: true
-                    }
-                });
+                const srvs = await db.select().from(serverData)
+                    .leftJoin(server, eq(server.id, serverData.serverId))
+                    .where(
+                        and(
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    );
+
+                return srvs
             },
             ServersQueryCacheTTL
         );
 
-        const filteredServers = servers.filter((server) => data.input.serverIds.includes(server.ServerID));
+        const filteredServers = servers.filter((server) => data.input.serverIds.includes(server.ServerData.serverId));
 
         return filteredServers;
     }),
@@ -43,27 +42,27 @@ export const serversRouter = router({
             serverId: z.string()
         })
     ).query(async (data) => {
-        const server = await queryCache.query(
+        const srv = await queryCache.query(
             `servers:${data.input.serverId}`,
             async () => {
-                return await prisma.server.findFirst({
-                    where: {
-                        ID: data.input.serverId,
-                        Status: 0,
-                        LastUpdated: {
-                            not: null
-                        }
-                    },
-                    include: {
-                        serverData: true,
-                        playersData: true
-                    }
-                });
+                var srvs = await db.select().from(server)
+                    .leftJoin(serverData, eq(server.id, serverData.serverId))
+                    .leftJoin(playersData, eq(server.id, playersData.serverId))
+                    .where(
+                        and(
+                            eq(server.id, data.input.serverId),
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    ).limit(1);
+
+                if (srvs.length === 0) return null;
+                return srvs[0];
             },
             ServersQueryCacheTTL
         );
 
-        return server;
+        return srv;
     }),
     fetchServers: publicProcedure.input(
         z.object({
@@ -92,19 +91,16 @@ export const serversRouter = router({
         let servers = await queryCache.query(
             'servers:all',
             async () => {
-                return await prisma.serverData.findMany({
-                    where: {
-                        server: {
-                            Status: 0,
-                            LastUpdated: {
-                                not: null
-                            }
-                        }
-                    },
-                    include: {
-                        server: true
-                    }
-                });
+                const srvs = await db.select().from(serverData)
+                    .leftJoin(server, eq(server.id, serverData.serverId))
+                    .where(
+                        and(
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    );
+
+                return srvs
             },
             ServersQueryCacheTTL
         );
@@ -116,15 +112,15 @@ export const serversRouter = router({
         }
 
         let filteredServers = servers.filter((server) => {
-            if (data.input.hiddenServers.includes(server.ServerID)) return false;
-            if (server.Hostname.toLowerCase().includes("cs2inspects.com")) return false;
+            if (data.input.hiddenServers.includes(server.ServerData.serverId)) return false;
+            if (server.ServerData.hostname.toLowerCase().includes("cs2inspects.com")) return false;
 
             /** Filters Section */
-            if (data.input.hideEmptyServers && server.PlayersCount == 0) return false;
-            if (!data.input.showFullServers && server.PlayersCount >= server.MaxPlayers) return false;
+            if (data.input.hideEmptyServers && server.ServerData.playersCount == 0) return false;
+            if (!data.input.showFullServers && server.ServerData.playersCount >= server.ServerData.maxPlayers) return false;
 
             if (data.input.showPings.length > 0 || data.input.hidePings.length > 0) {
-                const serverPing = EstimatePing(server.server!.Latitute, server.server!.Longitude, clientLocation.latitude, clientLocation.longitude);
+                const serverPing = EstimatePing(server.Server!.latitute, server.Server!.longitude, clientLocation.latitude, clientLocation.longitude);
                 for (const showPing of data.input.showPings) {
                     if (serverPing > showPing) return false;
                 }
@@ -134,21 +130,21 @@ export const serversRouter = router({
             }
 
             if (data.input.showMaps.length > 0 || data.input.hideMaps.length > 0) {
-                const map = server.Map;
+                const map = server.ServerData.map;
 
                 if (data.input.showMaps.length > 0 && !data.input.showMaps.includes(map)) return false;
                 if (data.input.hideMaps.length > 0 && data.input.hideMaps.includes(map)) return false;
             }
 
             if (data.input.showVersions.length > 0 || data.input.hideVersions.length > 0) {
-                const version = server.Version;
+                const version = server.ServerData.version;
 
                 if (data.input.showVersions.length > 0 && !data.input.showVersions.includes(version)) return false;
                 if (data.input.hideVersions.length > 0 && data.input.hideVersions.includes(version)) return false;
             }
 
             if (data.input.showContinents.length > 0 || data.input.hideContinents.length > 0) {
-                const country = server.server!.Country;
+                const country = server.Server!.country;
                 const continent = countryToContinent[country.toLowerCase()];
 
                 if (data.input.showContinents.length > 0 && !data.input.showContinents.includes(continent)) return false;
@@ -156,7 +152,7 @@ export const serversRouter = router({
             }
 
             if (data.input.showCountries.length > 0 || data.input.hideCountries.length > 0) {
-                const country = server.server!.Country;
+                const country = server.Server!.country;
 
                 if (data.input.showCountries.length > 0 && !data.input.showCountries.includes(country)) return false;
                 if (data.input.hideCountries.length > 0 && data.input.hideCountries.includes(country)) return false;
@@ -169,28 +165,28 @@ export const serversRouter = router({
                 if (searchValue.includes('(?=') || searchValue.includes('(?!')) {
                     try {
                         const rx = new RegExp(searchValue, "i");
-                        const combinedText = `${server.Hostname} ${server.Tags} ${server.server!.Address}`;
+                        const combinedText = `${server.ServerData.hostname} ${server.ServerData.tags} ${server.Server!.address}`;
                         return rx.test(combinedText);
                     } catch (error) {
                         const searchTerm = searchValue.toLowerCase();
-                        const hostname = server.Hostname.toLowerCase();
-                        const tags = server.Tags.toLowerCase();
-                        const address = server.server!.Address.toLowerCase();
+                        const hostname = server.ServerData.hostname.toLowerCase();
+                        const tags = server.ServerData.tags.toLowerCase();
+                        const address = server.Server!.address.toLowerCase();
                         return hostname.includes(searchTerm) || tags.includes(searchTerm) || address.includes(searchTerm);
                     }
                 } else {
                     try {
                         const rx = new RegExp(searchValue, "i");
-                        const hostname = server.Hostname;
-                        const tags = server.Tags;
-                        const address = server.server!.Address;
+                        const hostname = server.ServerData.hostname;
+                        const tags = server.ServerData.tags;
+                        const address = server.Server!.address;
 
                         return rx.test(hostname) || rx.test(tags) || rx.test(address);
                     } catch (error) {
                         const searchTerm = searchValue.toLowerCase();
-                        const hostname = server.Hostname.toLowerCase();
-                        const tags = server.Tags.toLowerCase();
-                        const address = server.server!.Address.toLowerCase();
+                        const hostname = server.ServerData.hostname.toLowerCase();
+                        const tags = server.ServerData.tags.toLowerCase();
+                        const address = server.Server!.address.toLowerCase();
                         return hostname.includes(searchTerm) || tags.includes(searchTerm) || address.includes(searchTerm);
                     }
                 }
@@ -204,8 +200,8 @@ export const serversRouter = router({
                 let result = 0;
 
                 if (data.input.sort.players && data.input.sort.players !== 'none') {
-                    const playerCountA = serverA.PlayersCount - serverA.BotsCount;
-                    const playerCountB = serverB.PlayersCount - serverB.BotsCount;
+                    const playerCountA = serverA.ServerData.playersCount - serverA.ServerData.botsCount;
+                    const playerCountB = serverB.ServerData.playersCount - serverB.ServerData.botsCount;
 
                     if (data.input.sort.players == 'asc') {
                         result += playerCountA - playerCountB;
@@ -215,8 +211,8 @@ export const serversRouter = router({
                 }
 
                 if (data.input.sort.ping && data.input.sort.ping !== 'none') {
-                    const pingA = EstimatePing(serverA.server!.Latitute, serverA.server!.Longitude, clientLocation.latitude, clientLocation.longitude);
-                    const pingB = EstimatePing(serverB.server!.Latitute, serverB.server!.Longitude, clientLocation.latitude, clientLocation.longitude);
+                    const pingA = EstimatePing(serverA.Server!.latitute, serverA.Server!.longitude, clientLocation.latitude, clientLocation.longitude);
+                    const pingB = EstimatePing(serverB.Server!.latitute, serverB.Server!.longitude, clientLocation.latitude, clientLocation.longitude);
 
                     if (data.input.sort.ping == 'asc') {
                         result += pingA - pingB;
@@ -229,22 +225,22 @@ export const serversRouter = router({
             })
         } else if (data.input.gamemode == "zombie-escape") {
             filteredServers = filteredServers.sort((serverA, serverB) => {
-                const playerCountA = serverA.PlayersCount - serverA.BotsCount;
-                const playerCountB = serverB.PlayersCount - serverB.BotsCount;
+                const playerCountA = serverA.ServerData.playersCount - serverA.ServerData.botsCount;
+                const playerCountB = serverB.ServerData.playersCount - serverB.ServerData.botsCount;
 
-                const pingA = EstimatePing(serverA.server!.Latitute, serverA.server!.Longitude, clientLocation.latitude, clientLocation.longitude);
-                const pingB = EstimatePing(serverB.server!.Latitute, serverB.server!.Longitude, clientLocation.latitude, clientLocation.longitude);
+                const pingA = EstimatePing(serverA.Server!.latitute, serverA.Server!.longitude, clientLocation.latitude, clientLocation.longitude);
+                const pingB = EstimatePing(serverB.Server!.latitute, serverB.Server!.longitude, clientLocation.latitude, clientLocation.longitude);
 
                 if (playerCountA == 0 && playerCountB == 0) return pingA - pingB;
                 else return playerCountB - playerCountA;
             });
         } else {
             filteredServers = filteredServers.sort((serverA, serverB) => {
-                const playerCountA = serverA.PlayersCount - serverA.BotsCount;
-                const playerCountB = serverB.PlayersCount - serverB.BotsCount;
+                const playerCountA = serverA.ServerData.playersCount - serverA.ServerData.botsCount;
+                const playerCountB = serverB.ServerData.playersCount - serverB.ServerData.botsCount;
 
-                const pingA = EstimatePing(serverA.server!.Latitute, serverA.server!.Longitude, clientLocation.latitude, clientLocation.longitude);
-                const pingB = EstimatePing(serverB.server!.Latitute, serverB.server!.Longitude, clientLocation.latitude, clientLocation.longitude);
+                const pingA = EstimatePing(serverA.Server!.latitute, serverA.Server!.longitude, clientLocation.latitude, clientLocation.longitude);
+                const pingB = EstimatePing(serverB.Server!.latitute, serverB.Server!.longitude, clientLocation.latitude, clientLocation.longitude);
 
                 const HIGH_PING_THRESHOLD = 150;
                 const MEDIUM_PING_THRESHOLD = 80;

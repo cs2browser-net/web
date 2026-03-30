@@ -18,7 +18,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { TRPCError } from "@trpc/server";
 import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
 export default function ServerPage({ serverid }: { serverid?: string }) {
@@ -41,7 +40,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
 
     useEffect(() => {
         if (data && location) {
-            setPing(EstimatePing(data.Latitute, data.Longitude, location.latitude, location.longitude))
+            setPing(EstimatePing(data.Server.latitute, data.Server.longitude, location.latitude, location.longitude))
         }
     }, [data, location]);
 
@@ -55,13 +54,13 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
 
     const allPlayersHaveEmptyNames = useMemo(() => {
         // @ts-expect-error
-        if (!data?.playersData?.List || data?.playersData?.List.length === 0) return false;
+        if (!data?.PlayersData?.list || data?.PlayersData?.list.length === 0) return false;
         // @ts-expect-error
-        return data.playersData.List.every(player => player.Name === "");
+        return data.PlayersData.list.every(player => player.Name === "");
     }, [data]);
 
     const chartData = useMemo(() => {
-        const histogram = histogramMode == "1" ? data?.playersData?.MaxLast24Hours : histogramMode === "2" ? data?.playersData?.MaxLast7Days : data?.playersData?.MaxLast30Days;
+        const histogram = histogramMode == "1" ? data?.PlayersData?.maxLast24Hours : histogramMode === "2" ? data?.PlayersData?.maxLast7Days : data?.PlayersData?.maxLast30Days;
         if (!histogram) return [];
 
         return Object.entries(histogram)
@@ -73,7 +72,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                     : new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
             }))
             .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-    }, [data?.playersData, histogramMode]);
+    }, [data?.PlayersData, histogramMode]);
 
     const handleReportSubmit = async () => {
         if (!serverid || !reportReason) return;
@@ -107,7 +106,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
         }
     };
 
-    if (!serverid || isLoading || !data || !data.serverData) {
+    if (!serverid || isLoading || !data || !data.ServerData) {
         return (
             <div className="w-full">
                 <div className="flex flex-row w-full">
@@ -129,31 +128,31 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                         <div className="flex items-start justify-between mb-3 gap-3">
                             <div className="flex items-center min-w-0 flex-1 overflow-hidden">
                                 <img
-                                    src={`https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${data.Country}.svg`}
-                                    alt={data.Country}
+                                    src={`https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${data.Server.country}.svg`}
+                                    alt={data.Server.country}
                                     style={{ width: "1.5em", height: "1.125em" }}
-                                    className="rounded shadow-sm mr-3 flex-shrink-0"
+                                    className="rounded shadow-sm mr-3 shrink-0"
                                 />
-                                <h1 className="text-md lg:text-lg text-white font-medium leading-tight break-words min-w-0">{data.serverData.Hostname}</h1>
+                                <h1 className="text-md lg:text-lg text-white font-medium leading-tight wrap-break-word min-w-0">{data.ServerData.hostname}</h1>
                             </div>
                         </div>
 
                         {/* Server Image */}
                         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-                            <div className="flex-shrink-0 w-full">
+                            <div className="shrink-0 w-full">
                                 <div className="w-full h-48 md:h-60 bg-gray-800/30 rounded-lg overflow-hidden border border-gray-700/30 relative">
                                     <img
-                                        src={`/maps/${data.serverData.Map}.webp`}
-                                        alt={`${data.serverData.Map} map`}
+                                        src={`/maps/${data.ServerData.map}.webp`}
+                                        alt={`${data.ServerData.map} map`}
                                         className="w-full h-full object-cover transition-transform duration-300"
                                         onError={(e) => {
                                             const target = e.target as HTMLImageElement;
                                             target.src = '/maps/default.webp';
                                         }}
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent"></div>
                                     <div className="absolute bottom-4 left-4 right-4">
-                                        <div className="text-white font-medium text-lg mb-1">{data.serverData.Map}</div>
+                                        <div className="text-white font-medium text-lg mb-1">{data.ServerData.map}</div>
                                         <div className="text-gray-300 text-sm">Current Map</div>
                                     </div>
                                 </div>
@@ -165,8 +164,8 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <Button
                                     onClick={() => {
-                                        if (data.Address) {
-                                            window.open(`steam://connect/${data.Address}`, '_self');
+                                        if (data.Server.address) {
+                                            window.open(`steam://connect/${data.Server.address}`, '_self');
                                         }
                                     }}
                                     className="w-full bg-green-600 hover:bg-green-700 text-white px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base flex items-center justify-center space-x-2 transition-colors duration-200"
@@ -176,8 +175,8 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                 </Button>
                                 <Button
                                     onClick={() => {
-                                        if (data.ID) {
-                                            const newState = toggleFavourite(data.ID);
+                                        if (data.Server.id) {
+                                            const newState = toggleFavourite(data.Server.id);
                                             toast.success(
                                                 newState ? 'Added to favorites!' : 'Removed from favorites!',
                                                 {
@@ -188,14 +187,14 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                             setChangedState(prev => prev + 1);
                                         }
                                     }}
-                                    className={`w-full px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base flex items-center justify-center transition-colors duration-200 ${data?.ID && isFavourite(data.ID)
+                                    className={`w-full px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base flex items-center justify-center transition-colors duration-200 ${data?.Server.id && isFavourite(data.Server.id)
                                         ? "bg-yellow-500 text-black hover:bg-yellow-600"
                                         : "bg-transparent border border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
                                         }`}
                                 >
-                                    <Star className={`h-4 w-4 lg:h-5 lg:w-5 ${data.ID && isFavourite(data.ID) ? "fill-current" : ""}`} />
+                                    <Star className={`h-4 w-4 lg:h-5 lg:w-5 ${data.Server.id && isFavourite(data.Server.id) ? "fill-current" : ""}`} />
                                     <span>
-                                        {data.ID && isFavourite(data.ID)
+                                        {data.Server.id && isFavourite(data.Server.id)
                                             ? "Remove from Favorites"
                                             : "Add to Favorites"
                                         }
@@ -206,19 +205,19 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <Button
                                     onClick={() => {
-                                        toggleHidden(data.ID);
-                                        toast.success(!isHidden(data.ID) ? 'Server unhidden!' : "Server hidden! You can manage hidden servers in your profile.", {
-                                            icon: !isHidden(data.ID) ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />,
+                                        toggleHidden(data.Server.id);
+                                        toast.success(!isHidden(data.Server.id) ? 'Server unhidden!' : "Server hidden! You can manage hidden servers in your profile.", {
+                                            icon: !isHidden(data.Server.id) ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />,
                                             duration: 2000,
                                         });
                                         setChangedState(prev => prev + 1);
                                     }}
-                                    className={`w-full bg-transparent px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base flex items-center justify-center space-x-2 transition-colors duration-200 ${isHidden(data.ID)
+                                    className={`w-full bg-transparent px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base flex items-center justify-center space-x-2 transition-colors duration-200 ${isHidden(data.Server.id)
                                         ? "border border-green-500 text-green-400 hover:bg-green-500/10 hover:text-green-300"
                                         : "border border-gray-500 text-gray-400 hover:bg-gray-500/10 hover:text-gray-300"
                                         }`}
                                 >
-                                    {changedState > -1 && isHidden(data.ID) ? (
+                                    {changedState > -1 && isHidden(data.Server.id) ? (
                                         <>
                                             <Eye className="h-4 w-4 lg:h-5 lg:w-5" />
                                             <span>Unhide Server</span>
@@ -248,19 +247,19 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                         <div className="space-y-2 mt-2">
                             <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
                                 <span className="text-gray-400 text-sm lg:text-md flex items-center gap-1"><Clock className="h-4 w-4 lg:h-5 lg:w-5 mr-1 inline" /> Last Updated</span>
-                                <span className="text-white font-medium text-xs lg:text-sm">{data.LastUpdated!.toLocaleString("en-GB")}</span>
+                                <span className="text-white font-medium text-xs lg:text-sm">{new Date(data.Server.lastUpdated!).toLocaleString("en-GB")}</span>
                             </div>
                             <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
                                 <span className="text-gray-400 text-sm lg:text-md flex items-center gap-1"><User className="h-4 w-4 lg:h-5 lg:w-5 mr-1 inline" /> Players</span>
-                                <span className="text-white font-medium text-xs lg:text-sm">{data.serverData.PlayersCount || 0} / {data.serverData.MaxPlayers || 0} {data.serverData.BotsCount > 0 ? `(${data.serverData.BotsCount} bot${data.serverData.BotsCount > 1 ? 's' : ''})` : ''}</span>
+                                <span className="text-white font-medium text-xs lg:text-sm">{data.ServerData.playersCount || 0} / {data.ServerData.maxPlayers || 0} {data.ServerData.botsCount > 0 ? `(${data.ServerData.botsCount} bot${data.ServerData.botsCount > 1 ? 's' : ''})` : ''}</span>
                             </div>
                             <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
                                 <span className="text-gray-400 text-sm lg:text-md flex items-center gap-1"><Keyboard className="h-4 w-4 lg:h-5 lg:w-5 mr-1 inline" /> Address</span>
-                                <span className="text-white font-medium text-xs lg:text-sm items-center flex"><Shield className={`h-4 w-4 lg:h-5 lg:w-5 mr-1 inline ${data.serverData.Secure ? "text-green-400" : "text-red-400"}`} /> {data.Address}</span>
+                                <span className="text-white font-medium text-xs lg:text-sm items-center flex"><Shield className={`h-4 w-4 lg:h-5 lg:w-5 mr-1 inline ${data.ServerData.secure ? "text-green-400" : "text-red-400"}`} /> {data.Server.address}</span>
                             </div>
                             <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
                                 <span className="text-gray-400 text-sm lg:text-md flex items-center gap-1"><Settings className="h-4 w-4 lg:h-5 lg:w-5 mr-1 inline" /> Game Version</span>
-                                <span className="text-white font-medium text-xs lg:text-sm">{data.serverData.Version || "Unknown"}</span>
+                                <span className="text-white font-medium text-xs lg:text-sm">{data.ServerData.version || "Unknown"}</span>
                             </div>
                             <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
                                 <span className="text-gray-400 text-sm lg:text-md flex items-center gap-1"><Activity className="h-4 w-4 lg:h-5 lg:w-5 mr-1 inline" /> Ping</span>
@@ -282,9 +281,9 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                             <div className="flex flex-col py-1.5">
                                 <span className="text-gray-400 text-sm lg:text-md flex items-center gap-1"><Tag className="h-4 w-4 lg:h-5 lg:w-5 mr-1 inline" /> Tags</span>
                                 <div className="mt-2">
-                                    {data.serverData.Tags && data.serverData.Tags.length > 0 ? (
+                                    {data.ServerData.tags && data.ServerData.tags.length > 0 ? (
                                         <div className="flex flex-wrap gap-2 max-w-md">
-                                            {data.serverData.Tags.split(",").map((tag, index) => (
+                                            {data.ServerData.tags.split(",").map((tag, index) => (
                                                 <span key={index} className="inline-block bg-gray-700/50 text-gray-300 text-xs lg:text-sm px-2 py-1 rounded">
                                                     {tag}
                                                 </span>
@@ -305,7 +304,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                             <div className="bg-amber-900/20 backdrop-blur-sm rounded-lg border border-amber-500/30 overflow-hidden">
                                 <div className="p-4">
                                     <div className="flex items-center space-x-3">
-                                        <AlertTriangle className="h-5 w-5 text-amber-400 flex-shrink-0" />
+                                        <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0" />
                                         <div>
                                             <h4 className="text-amber-400 font-medium text-sm">Player Names Not Available</h4>
                                             <p className="text-white text-xs mt-1">
@@ -323,10 +322,10 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                         {/* Mobile */}
                         <div className="block md:hidden p-4">
                             {/* @ts-expect-error */}
-                            <h3 className="text-base font-medium text-white mb-3">Players Online ({data.playersData?.List?.length})</h3>
+                            <h3 className="text-base font-medium text-white mb-3">Players Online ({data.PlayersData?.list?.length})</h3>
                             <div className="space-y-3 max-h-96 overflow-y-auto">
                                 {/* @ts-expect-error */}
-                                {data.playersData?.List!.map((player, index) => {
+                                {data.PlayersData?.list?.map((player, index) => {
                                     const initialDuration = Math.floor(player.Duration);
                                     const elapsedSinceLoad = currentTime - pageLoadTime;
                                     const currentDuration = initialDuration + elapsedSinceLoad;
@@ -337,7 +336,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                                 <div className="flex items-center space-x-2">
                                                     <span className="text-gray-400 text-xs">#{index + 1}</span>
                                                     <span className="text-white font-medium text-sm truncate">
-                                                        {player.Name == "" ? `Player #${index + 1}` : player.Name}
+                                                        {player.Name == "" ? `Player #${index + 1}` : player.Name.length > 18 ? player.Name.substring(0, 15) + "..." : player.Name}
                                                     </span>
                                                 </div>
                                                 <span className="text-gray-300 text-xs">{player.Score} pts</span>
@@ -354,10 +353,10 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                         {/* Desktop */}
                         <div className="hidden md:block p-4 lg:p-6">
                             {/* @ts-expect-error */}
-                            <h3 className="text-lg font-medium text-white mb-3">Players Online ({data.playersData?.List?.length})</h3>
+                            <h3 className="text-lg font-medium text-white mb-3">Players Online ({data.PlayersData?.list?.length})</h3>
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 max-h-96 overflow-y-auto">
                                 {/* @ts-expect-error */}
-                                {data.playersData?.List?.map((player, index) => {
+                                {data.PlayersData?.list?.map((player, index) => {
                                     const initialDuration = Math.floor(player.Duration);
                                     const elapsedSinceLoad = currentTime - pageLoadTime;
                                     const currentDuration = initialDuration + elapsedSinceLoad;
@@ -371,7 +370,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                                     </div>
                                                     <div className="min-w-0 flex-1">
                                                         <div className="text-white font-medium truncate">
-                                                            {player.Name == "" ? `Player #${index + 1}` : player.Name}
+                                                            {player.Name == "" ? `Player #${index + 1}` : player.Name.length > 18 ? player.Name.substring(0, 15) + "..." : player.Name}
                                                         </div>
                                                         <div className="text-gray-400 text-xs">
                                                             Playing for {formatDuration(currentDuration)}
@@ -446,7 +445,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                             tickLine={false}
                                             axisLine={false}
                                             tickMargin={8}
-                                            domain={[0, data?.serverData.MaxPlayers || 64]}
+                                            domain={[0, data?.ServerData.maxPlayers || 64]}
                                         />
                                         <ChartTooltip
                                             cursor={false}
@@ -692,7 +691,7 @@ export default function ServerPage({ serverid }: { serverid?: string }) {
                                 value={reportDetails}
                                 onChange={(e) => setReportDetails(e.target.value)}
                                 maxLength={500}
-                                className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 min-h-[80px] resize-none"
+                                className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 min-h-20 resize-none"
                             />
                             <p className="text-xs text-gray-400 mt-1">
                                 {reportDetails.length}/500 characters

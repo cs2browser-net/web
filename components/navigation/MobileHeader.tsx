@@ -20,7 +20,7 @@ export default function MobileHeader() {
                     <span className="sr-only">Toggle menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col">
+            <SheetContent side="right" className="w-75 sm:w-100 flex flex-col">
                 <div className="flex flex-col gap-4 mt-12 overflow-y-auto flex-1 pr-2">
                     <AddServer />
 

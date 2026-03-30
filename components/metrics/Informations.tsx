@@ -13,7 +13,7 @@ export default function Informations({ data, currentStats, mode, setMode }: { da
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                    <div className="bg-gradient-to-r from-gray-800/40 to-gray-800/20 rounded-xl p-4 border border-gray-700/40">
+                    <div className="bg-linear-to-r from-gray-800/40 to-gray-800/20 rounded-xl p-4 border border-gray-700/40">
                         <div className="flex items-center justify-between">
                             <div>
                                 <div className="text-gray-400 text-sm mb-1">Steam API Filtered Servers</div>
@@ -25,7 +25,7 @@ export default function Informations({ data, currentStats, mode, setMode }: { da
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-gray-800/40 to-gray-800/20 rounded-xl p-4 border border-gray-700/40">
+                    <div className="bg-linear-to-r from-gray-800/40 to-gray-800/20 rounded-xl p-4 border border-gray-700/40">
                         <div className="flex items-center justify-between">
                             <div>
                                 <div className="text-gray-400 text-sm mb-1">Filtered Servers</div>
@@ -37,7 +37,7 @@ export default function Informations({ data, currentStats, mode, setMode }: { da
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-gray-800/40 to-gray-800/20 rounded-xl p-4 border border-gray-700/40">
+                    <div className="bg-linear-to-r from-gray-800/40 to-gray-800/20 rounded-xl p-4 border border-gray-700/40">
                         <div className="flex items-center justify-between">
                             <div>
                                 <div className="text-gray-400 text-sm mb-1">Total Players</div>

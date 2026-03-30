@@ -32,7 +32,7 @@ export default function Contact() {
                 </div>
                 <div className="mt-8 p-4 bg-gray-800/40 rounded-lg border border-gray-700/30">
                     <div className="flex items-start space-x-3">
-                        <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                        <AlertCircle className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
                         <div>
                             <p className="text-yellow-500 font-medium text-sm mb-1">
                                 Still have questions?

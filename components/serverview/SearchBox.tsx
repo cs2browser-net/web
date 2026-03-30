@@ -5,15 +5,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import { Button } from "../ui/button";
 import { Badge } from "@/components/ui/badge"
-import { Server, ServerData } from "@/generated/prisma/browser";
 import { countActiveFilters, useFiltersStore } from "@/lib/filters/store";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { ServerAndServerData } from "@/lib/api/data";
 
 interface SearchBoxProps {
     onToggleFilters: () => void;
     servers?: {
-        servers: (({ server: Server }) & ServerData)[];
+        servers: ServerAndServerData[];
         count: number;
     };
 }

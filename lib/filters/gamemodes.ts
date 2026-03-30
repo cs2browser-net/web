@@ -94,7 +94,7 @@ export function GetServersByGamemode(servers: any[], gm: string): any[] {
     const patterns = toRegexArray(spec);
 
     return servers.filter((srv) =>
-        patterns.some(({ field, regex }) => regex.test(String(srv?.[field] ?? "")))
+        patterns.some(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")))
     );
 }
 
@@ -104,5 +104,5 @@ export function isZombieEscapeServer(server: any): boolean {
 
     const patterns = toRegexArray(zeSpec);
 
-    return patterns.some(({ field, regex }) => regex.test(String(server?.[field] ?? "")));
+    return patterns.some(({ field, regex }) => regex.test(String(server?.ServerData?.[field.toLowerCase()] ?? "")));
 }

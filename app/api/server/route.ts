@@ -14,22 +14,22 @@ export async function GET(req: Request) {
 
     const returnServer = server ? {
         server_info: {
-            server_id: server.ID,
-            hostname: server.serverData?.Hostname || "",
-            address: server.Address,
-            map: server.serverData?.Map || "",
-            players_count: server.serverData?.PlayersCount || 0,
-            max_players: server.serverData?.MaxPlayers || 0,
-            bots_count: server.serverData?.BotsCount || 0,
-            secure: server.serverData?.Secure || false,
-            version: server.serverData?.Version || "",
-            tags: server.serverData?.Tags || "",
-            country: server.Country || "",
-            lat: server.Latitute || 0,
-            lon: server.Longitude || 0,
+            server_id: server.Server.id,
+            hostname: server.ServerData?.hostname || "",
+            address: server.Server.address,
+            map: server.ServerData?.map || "",
+            players_count: server.ServerData?.playersCount || 0,
+            max_players: server.ServerData?.maxPlayers || 0,
+            bots_count: server.ServerData?.botsCount || 0,
+            secure: server.ServerData?.secure || false,
+            version: server.ServerData?.version || "",
+            tags: server.ServerData?.tags || "",
+            country: server.Server.country || "",
+            lat: server.Server.latitute || 0,
+            lon: server.Server.longitude || 0,
         },
-        players: server.playersData!.List,
-        player_histogram: searchParams.get("mode") == "3" ? server.playersData!.MaxLast30Days : (searchParams.get("mode") == "2" ? server.playersData!.MaxLast7Days : server.playersData!.MaxLast24Hours)
+        players: server.PlayersData!.list,
+        player_histogram: searchParams.get("mode") == "3" ? server.PlayersData!.maxLast30Days : (searchParams.get("mode") == "2" ? server.PlayersData!.maxLast7Days : server.PlayersData!.maxLast24Hours)
     } : null;
 
     return NextResponse.json(returnServer);

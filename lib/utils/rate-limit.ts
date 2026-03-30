@@ -1,5 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import { prisma } from "@/lib/db/prisma";
+import { db } from "../db/drizzle";
+import { rateLimit } from "@/generated/drizzle/schema";
+import { and, desc, eq, gte } from "drizzle-orm";
 
 interface RateLimitConfig {
     windowSeconds: number;
@@ -97,29 +99,28 @@ export async function checkRateLimit(
     }
 
     const windowStart = new Date(now.getTime() - config.windowSeconds * 1000);
+    const rateLimits = await db.select().from(rateLimit).orderBy(desc(rateLimit.windowStart))
+        .where(
+            and(
+                eq(rateLimit.ip, ip),
+                eq(rateLimit.kind, kind),
+                gte(rateLimit.windowStart, windowStart.toISOString())
+            )
+        )
 
-    const rateLimit = await prisma.rateLimit.findFirst({
-        where: {
-            IP: ip,
-            Kind: kind,
-            WindowStart: {
-                gte: windowStart
-            }
-        },
-        orderBy: {
-            WindowStart: 'desc'
-        }
-    });
+    const rL = rateLimits.length > 0 ? rateLimits[0] : null;
 
-    if (rateLimit) {
-        if (rateLimit.Count >= config.maxCount) {
+    if (rL) {
+        var windowStartDate = new Date(rL.windowStart);
+
+        if (rL.count >= config.maxCount) {
             const timeRemaining = Math.ceil(
-                (rateLimit.WindowStart.getTime() + config.windowSeconds * 1000 - now.getTime()) / 1000
+                (windowStartDate.getTime() + config.windowSeconds * 1000 - now.getTime()) / 1000
             );
 
             rateLimitCache.set(cacheKey, {
-                count: rateLimit.Count,
-                windowStart: rateLimit.WindowStart
+                count: rL.count,
+                windowStart: windowStartDate
             });
 
             throw new TRPCError({
@@ -128,31 +129,25 @@ export async function checkRateLimit(
             });
         }
 
-        const newCount = rateLimit.Count + 1;
+        const newCount = rL.count + 1;
 
         rateLimitCache.set(cacheKey, {
             count: newCount,
-            windowStart: rateLimit.WindowStart
+            windowStart: windowStartDate
         });
 
-        await prisma.rateLimit.update({
-            where: {
-                ID: rateLimit.ID
-            },
-            data: {
-                Count: newCount,
-                LastSeen: now
-            }
-        });
+        await db.update(rateLimit).set({
+            count: newCount,
+            lastSeen: now.toISOString()
+        }).where(eq(rateLimit.id, rL.id));
     } else {
-        await prisma.rateLimit.create({
-            data: {
-                IP: ip,
-                Kind: kind,
-                Count: 1,
-                LastSeen: now,
-                WindowStart: now
-            }
+        await db.insert(rateLimit).values({
+            id: crypto.randomUUID(),
+            ip,
+            kind,
+            count: 1,
+            lastSeen: now.toISOString(),
+            windowStart: now.toISOString()
         });
 
         rateLimitCache.set(cacheKey, {
@@ -169,23 +164,20 @@ async function updateRateLimitDb(
     windowStart: Date,
     lastSeen: Date
 ): Promise<void> {
-    const rateLimit = await prisma.rateLimit.findFirst({
-        where: {
-            IP: ip,
-            Kind: kind,
-            WindowStart: windowStart
-        }
-    });
+    const rateLimits = await db.select().from(rateLimit)
+        .where(
+            and(
+                eq(rateLimit.ip, ip),
+                eq(rateLimit.kind, kind),
+                eq(rateLimit.windowStart, windowStart.toISOString())
+            )
+        );
 
-    if (rateLimit) {
-        await prisma.rateLimit.update({
-            where: {
-                ID: rateLimit.ID
-            },
-            data: {
-                Count: count,
-                LastSeen: lastSeen
-            }
-        });
+    if (rateLimits.length > 0) {
+        const rL = rateLimits[0];
+        await db.update(rateLimit).set({
+            count: count,
+            lastSeen: lastSeen.toISOString()
+        }).where(eq(rateLimit.id, rL.id));
     }
 }

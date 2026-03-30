@@ -88,7 +88,7 @@ export default function ChangelogPage() {
                                                                         key={detailIndex}
                                                                         className="text-gray-400 text-sm flex items-start"
                                                                     >
-                                                                        <span className="text-[#00feed] mr-2 mt-1.5 w-1 h-1 rounded-full bg-[#00feed] flex-shrink-0"></span>
+                                                                        <span className="text-[#00feed] mr-2 mt-1.5 w-1 h-1 rounded-full bg-[#00feed] shrink-0"></span>
                                                                         {detail}
                                                                     </li>
                                                                 ))}

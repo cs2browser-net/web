@@ -1,4 +1,6 @@
+import { server, serverData } from "@/generated/drizzle/schema";
 import { SITE_VARIANT } from "../consts/settings";
+import { InferSelectModel } from "drizzle-orm";
 
 export interface APIEndpoint {
     path: string;
@@ -328,3 +330,5 @@ export const apiEndpoints: APIEndpoint[] = [
         }
     }
 ];
+
+export type ServerAndServerData = { Server: InferSelectModel<typeof server>, ServerData: InferSelectModel<typeof serverData> };
