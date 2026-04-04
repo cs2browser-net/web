@@ -25,6 +25,7 @@
     "country-list": "^2.4.1",
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.34.3",
+    "ioredis": "^5.10.1",
     "lucide-react": "^0.575.0",
     "maxmind": "^5.0.5",
     "next": "16.1.6",

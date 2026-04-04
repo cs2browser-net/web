@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { db } from "../db/drizzle";
 import { rateLimit } from "@/generated/drizzle/schema";
 import { and, desc, eq, gte } from "drizzle-orm";
+import { cacheClient, ratelimitsCacheKey } from "@/lib/cache/redis";
 
 interface RateLimitConfig {
     windowSeconds: number;
@@ -13,59 +14,103 @@ interface RateLimitData {
     windowStart: Date;
 }
 
-interface CacheEntry {
-    data: RateLimitData;
-    timestamp: number;
+interface RateLimitCacheEntry {
+    count: number;
+    windowStart: string;
+    expiresAt: number;
 }
 
 class RateLimitCache {
-    private cache: Map<string, CacheEntry>;
-    private ttl: number;
+    private readonly TTL = 5000;
 
-    constructor(ttl: number = 5000) {
-        this.cache = new Map();
-        this.ttl = ttl;
+    private buildField(ip: string, kind: string): string {
+        return `${ip}:${kind}`;
     }
 
-    get(key: string): RateLimitData | null {
-        const entry = this.cache.get(key);
+    async get(ip: string, kind: string): Promise<RateLimitData | null> {
+        try {
+            const field = this.buildField(ip, kind);
+            const cached = await cacheClient.hget(ratelimitsCacheKey, field);
 
-        if (!entry) {
+            if (!cached) {
+                return null;
+            }
+
+            const entry: RateLimitCacheEntry = JSON.parse(cached);
+            const now = Date.now();
+
+            if (entry.expiresAt <= now) {
+                await cacheClient.hdel(ratelimitsCacheKey, field);
+                return null;
+            }
+
+            return {
+                count: entry.count,
+                windowStart: new Date(entry.windowStart)
+            };
+        } catch (error) {
+            console.error(`Error getting rate limit cache for ip ${ip}, kind ${kind}:`, error);
             return null;
         }
+    }
 
-        const now = Date.now();
-        const isExpired = (now - entry.timestamp) >= this.ttl;
-
-        if (isExpired) {
-            this.cache.delete(key);
-            return null;
+    async set(ip: string, kind: string, data: RateLimitData): Promise<void> {
+        try {
+            const field = this.buildField(ip, kind);
+            const entry: RateLimitCacheEntry = {
+                count: data.count,
+                windowStart: data.windowStart.toISOString(),
+                expiresAt: Date.now() + this.TTL
+            };
+            await cacheClient.hset(ratelimitsCacheKey, field, JSON.stringify(entry));
+        } catch (error) {
+            console.error(`Error setting rate limit cache for ip ${ip}, kind ${kind}:`, error);
         }
-
-        return entry.data;
     }
 
-    set(key: string, data: RateLimitData): void {
-        this.cache.set(key, {
-            data,
-            timestamp: Date.now()
-        });
+    async invalidate(ip: string, kind: string): Promise<boolean> {
+        try {
+            const field = this.buildField(ip, kind);
+            const result = await cacheClient.hdel(ratelimitsCacheKey, field);
+            return result > 0;
+        } catch (error) {
+            console.error(`Error invalidating rate limit cache for ip ${ip}, kind ${kind}:`, error);
+            return false;
+        }
     }
 
-    invalidate(key: string): boolean {
-        return this.cache.delete(key);
+    async invalidateByIp(ip: string): Promise<number> {
+        try {
+            const allEntries = await cacheClient.hgetall(ratelimitsCacheKey);
+            const fieldsToDelete: string[] = [];
+
+            for (const field of Object.keys(allEntries)) {
+                if (field.startsWith(`${ip}:`)) {
+                    fieldsToDelete.push(field);
+                }
+            }
+
+            if (fieldsToDelete.length > 0) {
+                await cacheClient.hdel(ratelimitsCacheKey, ...fieldsToDelete);
+            }
+
+            return fieldsToDelete.length;
+        } catch (error) {
+            console.error(`Error invalidating all rate limits for ip ${ip}:`, error);
+            return 0;
+        }
     }
 
-    clear(): void {
-        this.cache.clear();
-    }
-
-    get size(): number {
-        return this.cache.size;
+    async clear(): Promise<void> {
+        try {
+            await cacheClient.del(ratelimitsCacheKey);
+        } catch (error) {
+            console.error(`Error clearing rate limit cache:`, error);
+        }
     }
 }
 
-const rateLimitCache = new RateLimitCache(5000);
+const rateLimitCache = new RateLimitCache();
 
 export async function checkRateLimit(
     ip: string,
@@ -73,8 +118,7 @@ export async function checkRateLimit(
     config: RateLimitConfig
 ): Promise<void> {
     const now = new Date();
-    const cacheKey = `${ip}:${kind}`;
-    const cached = rateLimitCache.get(cacheKey);
+    const cached = await rateLimitCache.get(ip, kind);
 
     if (cached) {
         if (cached.count >= config.maxCount) {
@@ -91,7 +135,7 @@ export async function checkRateLimit(
             count: cached.count + 1,
             windowStart: cached.windowStart
         };
-        rateLimitCache.set(cacheKey, updatedData);
+        await rateLimitCache.set(ip, kind, updatedData);
 
         updateRateLimitDb(ip, kind, updatedData.count, cached.windowStart, now).catch(console.error);
 
@@ -118,7 +162,7 @@ export async function checkRateLimit(
                 (windowStartDate.getTime() + config.windowSeconds * 1000 - now.getTime()) / 1000
             );
 
-            rateLimitCache.set(cacheKey, {
+            await rateLimitCache.set(ip, kind, {
                 count: rL.count,
                 windowStart: windowStartDate
             });
@@ -131,7 +175,7 @@ export async function checkRateLimit(
 
         const newCount = rL.count + 1;
 
-        rateLimitCache.set(cacheKey, {
+        await rateLimitCache.set(ip, kind, {
             count: newCount,
             windowStart: windowStartDate
         });
@@ -150,7 +194,7 @@ export async function checkRateLimit(
             windowStart: now.toISOString()
         });
 
-        rateLimitCache.set(cacheKey, {
+        await rateLimitCache.set(ip, kind, {
             count: 1,
             windowStart: now
         });
