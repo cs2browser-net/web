@@ -14,9 +14,11 @@ export const EstimatePing = (serverLat: number, serverLon: number, userLat?: num
     const dt = (userLat - serverLat) * Math.PI / 180;
     const da = (userLon - serverLon) * Math.PI / 180;
 
-    const a = Math.sin(dt / 2) * Math.sin(dt / 2) +
+    const dtSin = Math.sin(dt / 2);
+    const daSin = Math.sin(da / 2);
+    const a = dtSin * dtSin +
         Math.cos(a1) * Math.cos(a2) *
-        Math.sin(da / 2) * Math.sin(da / 2);
+        daSin * daSin;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     const distanceInMeters = R * c;
