@@ -105,7 +105,7 @@ export const serversRouter = router({
             ServersQueryCacheTTL
         );
 
-        const clientLocation = GetLocation(data.ctx.ip);
+        const clientLocation = await GetLocation(data.ctx.ip);
 
         if (data.input.gamemode !== undefined && data.input.gamemode !== "") {
             servers = GetServersByGamemode(servers, data.input.gamemode);

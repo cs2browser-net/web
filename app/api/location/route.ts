@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
     const ip = GetClientIP(req.headers);
-    const location = GetLocation(ip);
+    const location = await GetLocation(ip);
 
     return NextResponse.json({ lat: location.latitude, lon: location.longitude });
 }

@@ -1,4 +1,4 @@
-import { mmdbv4, mmdbv6 } from "../location/maxmind";
+import { LookupGeoIpCity } from "@/lib/location/geoip-service";
 import { Location } from "../location/store";
 
 export function GetClientIP(headers: Headers) {
@@ -15,15 +15,21 @@ export function GetClientIP(headers: Headers) {
     return ip;
 }
 
-export function GetLocation(ip: string): Location {
-    if (ip.includes(":")) {
-        const info = mmdbv6.get(ip)
-        // @ts-expect-error wrong info
-        return { latitude: info?.latitude || 0.0, longitude: info?.longitude || 0.0, countryCode: info?.country_code.toLowerCase() || "ro" }
-    } else {
-        const info = mmdbv4.get(ip)
-        // @ts-expect-error wrong info
-        return { latitude: info?.latitude || 0.0, longitude: info?.longitude || 0.0, countryCode: info?.country_code.toLowerCase() || "ro" }
+export async function GetLocation(ip: string): Promise<Location> {
+    try {
+        const info = await LookupGeoIpCity(ip);
+
+        if (!info) {
+            return { latitude: 0.0, longitude: 0.0, countryCode: "ro" };
+        }
+
+        return {
+            latitude: info.latitude ?? 0.0,
+            longitude: info.longitude ?? 0.0,
+            countryCode: info.countryCode?.toLowerCase() ?? "ro",
+        };
+    } catch {
+        return { latitude: 0.0, longitude: 0.0, countryCode: "ro" };
     }
 }
 

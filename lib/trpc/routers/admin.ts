@@ -83,7 +83,7 @@ export const adminRouter = router({
                             lastUpdated: null
                         }).where(eq(server.id, serverExists.id));
                     } else {
-                        var location = GetLocation(srv.split(":")[0]);
+                        var location = await GetLocation(srv.split(":")[0]);
 
                         createdServers.push({
                             id: crypto.randomUUID(),
