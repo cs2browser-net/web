@@ -1,9 +1,8 @@
 "use client"
 
-import * as RechartsPrimitive from "recharts"
-
 import { cn } from "@/lib/utils"
 import { ComponentProps, ComponentType, createContext, CSSProperties, ReactNode, useContext, useId, useMemo } from "react"
+import { Legend, LegendProps, ResponsiveContainer, Tooltip } from "recharts"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
@@ -43,7 +42,7 @@ function ChartContainer({
 }: ComponentProps<"div"> & {
   config: ChartConfig
   children: ComponentProps<
-    typeof RechartsPrimitive.ResponsiveContainer
+    typeof ResponsiveContainer
   >["children"]
 }) {
   const uniqueId = useId()
@@ -61,9 +60,9 @@ function ChartContainer({
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
+        <ResponsiveContainer>
           {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        </ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   )
@@ -102,7 +101,7 @@ ${colorConfig
   )
 }
 
-const ChartTooltip = RechartsPrimitive.Tooltip
+const ChartTooltip = Tooltip
 
 function ChartTooltipContent({
   active,
@@ -118,7 +117,7 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: ComponentProps<typeof RechartsPrimitive.Tooltip> &
+}: ComponentProps<typeof Tooltip> &
   ComponentProps<"div"> & {
     hideLabel?: boolean
     hideIndicator?: boolean
@@ -250,7 +249,7 @@ function ChartTooltipContent({
   )
 }
 
-const ChartLegend = RechartsPrimitive.Legend
+const ChartLegend = Legend
 
 function ChartLegendContent({
   className,
@@ -259,7 +258,7 @@ function ChartLegendContent({
   verticalAlign = "bottom",
   nameKey,
 }: ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  Pick<LegendProps, "payload" | "verticalAlign"> & {
     hideIcon?: boolean
     nameKey?: string
   }) {

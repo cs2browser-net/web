@@ -107,12 +107,32 @@ export const serversRouter = router({
 
         const clientLocation = await GetLocation(data.ctx.ip);
 
+        const hiddenServersSet = data.input.hiddenServers.length > 0 ? new Set(data.input.hiddenServers) : null;
+        const showMapsSet = data.input.showMaps.length > 0 ? new Set(data.input.showMaps) : null;
+        const hideMapsSet = data.input.hideMaps.length > 0 ? new Set(data.input.hideMaps) : null;
+        const showVersionsSet = data.input.showVersions.length > 0 ? new Set(data.input.showVersions) : null;
+        const hideVersionsSet = data.input.hideVersions.length > 0 ? new Set(data.input.hideVersions) : null;
+        const showContinentsSet = data.input.showContinents.length > 0 ? new Set(data.input.showContinents) : null;
+        const hideContinentsSet = data.input.hideContinents.length > 0 ? new Set(data.input.hideContinents) : null;
+        const showCountriesSet = data.input.showCountries.length > 0 ? new Set(data.input.showCountries) : null;
+        const hideCountriesSet = data.input.hideCountries.length > 0 ? new Set(data.input.hideCountries) : null;
+
+        let searchRegex: RegExp | null = null;
+        let searchTermLower: string | null = null;
+        if (data.input.searchBarQuery) {
+            try {
+                searchRegex = new RegExp(data.input.searchBarQuery, "i");
+            } catch {
+                searchTermLower = data.input.searchBarQuery.toLowerCase();
+            }
+        }
+
         if (data.input.gamemode !== undefined && data.input.gamemode !== "") {
             servers = GetServersByGamemode(servers, data.input.gamemode);
         }
 
         let filteredServers = servers.filter((server) => {
-            if (data.input.hiddenServers.includes(server.ServerData.serverId)) return false;
+            if (hiddenServersSet?.has(server.ServerData.serverId)) return false;
             if (server.ServerData.hostname.toLowerCase().includes("cs2inspects.com")) return false;
 
             /** Filters Section */
@@ -129,66 +149,51 @@ export const serversRouter = router({
                 }
             }
 
-            if (data.input.showMaps.length > 0 || data.input.hideMaps.length > 0) {
+            if (showMapsSet || hideMapsSet) {
                 const map = server.ServerData.map;
 
-                if (data.input.showMaps.length > 0 && !data.input.showMaps.includes(map)) return false;
-                if (data.input.hideMaps.length > 0 && data.input.hideMaps.includes(map)) return false;
+                if (showMapsSet && !showMapsSet.has(map)) return false;
+                if (hideMapsSet && hideMapsSet.has(map)) return false;
             }
 
-            if (data.input.showVersions.length > 0 || data.input.hideVersions.length > 0) {
+            if (showVersionsSet || hideVersionsSet) {
                 const version = server.ServerData.version;
 
-                if (data.input.showVersions.length > 0 && !data.input.showVersions.includes(version)) return false;
-                if (data.input.hideVersions.length > 0 && data.input.hideVersions.includes(version)) return false;
+                if (showVersionsSet && !showVersionsSet.has(version)) return false;
+                if (hideVersionsSet && hideVersionsSet.has(version)) return false;
             }
 
-            if (data.input.showContinents.length > 0 || data.input.hideContinents.length > 0) {
+            if (showContinentsSet || hideContinentsSet) {
                 const country = server.Server!.country;
-                const continent = countryToContinent[country.toLowerCase()];
+                const continent = countryToContinent[country.toLowerCase()] ?? "";
 
-                if (data.input.showContinents.length > 0 && !data.input.showContinents.includes(continent)) return false;
-                if (data.input.hideContinents.length > 0 && data.input.hideContinents.includes(continent)) return false;
+                if (showContinentsSet && !showContinentsSet.has(continent)) return false;
+                if (hideContinentsSet && hideContinentsSet.has(continent)) return false;
             }
 
-            if (data.input.showCountries.length > 0 || data.input.hideCountries.length > 0) {
+            if (showCountriesSet || hideCountriesSet) {
                 const country = server.Server!.country;
 
-                if (data.input.showCountries.length > 0 && !data.input.showCountries.includes(country)) return false;
-                if (data.input.hideCountries.length > 0 && data.input.hideCountries.includes(country)) return false;
+                if (showCountriesSet && !showCountriesSet.has(country)) return false;
+                if (hideCountriesSet && hideCountriesSet.has(country)) return false;
             }
 
             /** Search Bar Filtering */
-            if (data.input.searchBarQuery) {
-                const searchValue = data.input.searchBarQuery;
+            if (searchRegex) {
+                const hostname = server.ServerData.hostname;
+                const tags = server.ServerData.tags;
+                const address = server.Server!.address;
 
-                if (searchValue.includes('(?=') || searchValue.includes('(?!')) {
-                    try {
-                        const rx = new RegExp(searchValue, "i");
-                        const combinedText = `${server.ServerData.hostname} ${server.ServerData.tags} ${server.Server!.address}`;
-                        return rx.test(combinedText);
-                    } catch (error) {
-                        const searchTerm = searchValue.toLowerCase();
-                        const hostname = server.ServerData.hostname.toLowerCase();
-                        const tags = server.ServerData.tags.toLowerCase();
-                        const address = server.Server!.address.toLowerCase();
-                        return hostname.includes(searchTerm) || tags.includes(searchTerm) || address.includes(searchTerm);
-                    }
-                } else {
-                    try {
-                        const rx = new RegExp(searchValue, "i");
-                        const hostname = server.ServerData.hostname;
-                        const tags = server.ServerData.tags;
-                        const address = server.Server!.address;
+                return searchRegex.test(hostname) || searchRegex.test(tags) || searchRegex.test(address);
+            }
 
-                        return rx.test(hostname) || rx.test(tags) || rx.test(address);
-                    } catch (error) {
-                        const searchTerm = searchValue.toLowerCase();
-                        const hostname = server.ServerData.hostname.toLowerCase();
-                        const tags = server.ServerData.tags.toLowerCase();
-                        const address = server.Server!.address.toLowerCase();
-                        return hostname.includes(searchTerm) || tags.includes(searchTerm) || address.includes(searchTerm);
-                    }
+            if (searchTermLower !== null) {
+                const hostname = server.ServerData.hostname.toLowerCase();
+                const tags = server.ServerData.tags.toLowerCase();
+                const address = server.Server!.address.toLowerCase();
+
+                if (!hostname.includes(searchTermLower) && !tags.includes(searchTermLower) && !address.includes(searchTermLower)) {
+                    return false;
                 }
             }
 
