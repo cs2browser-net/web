@@ -3,10 +3,10 @@
 import { useLocationStore } from "@/lib/location/store";
 import { trpc } from "@/lib/trpc";
 import Header from "../navigation/Header";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 
-export default function PageLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function PageLayout({ children }: Readonly<{ children: ReactNode }>) {
     const locationData = trpc.location.getInfo.useQuery()
     const location = useLocationStore()
 

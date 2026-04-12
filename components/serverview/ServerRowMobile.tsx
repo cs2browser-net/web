@@ -25,7 +25,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
 
     const ping = useMemo(() => EstimatePing(server.Server.latitute, server.Server.longitude, location?.latitude, location?.longitude), [server, location]);
 
-    const handleCopyIP = (e: React.MouseEvent) => {
+    const handleCopyIP = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         navigator.clipboard.writeText(`connect ${server.Server.address}`);
@@ -36,7 +36,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
         });
     };
 
-    const handleConnect = (e: React.MouseEvent) => {
+    const handleConnect = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         const steamConnectUrl = `steam://connect/${server.Server.address}`;
@@ -47,7 +47,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
         });
     };
 
-    const handleHideServer = (e: React.MouseEvent) => {
+    const handleHideServer = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         hiddenServers.toggleHidden(server.Server.id);
@@ -57,7 +57,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
         });
     };
 
-    const handleToggleFavorite = (e: React.MouseEvent) => {
+    const handleToggleFavorite = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         const newState = favouriteServers.toggleFavourite(server.Server.id);
@@ -98,7 +98,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
                         <img src={`https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${server.Server.country}.svg`} alt={server.Server.country} style={{ width: '1.25em', height: '1em' }} />
                     </div>
                     <button
-                        onClick={handleCopyIP}
+                        onClick={handleCopyIP as any}
                         className="text-gray-300 text-xs font-mono hover:text-[#00feed] hover:bg-gray-800/40 px-2 py-1.5 rounded transition-colors duration-200 group flex items-center"
                         title="Click to copy IP"
                     >
@@ -126,14 +126,14 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
             <div className="flex items-center justify-between text-base mt-2">
                 <div className="flex items-center space-x-4 text-gray-400 min-w-0 flex-1">
                     <button
-                        onClick={handleToggleFavorite}
+                        onClick={handleToggleFavorite as any}
                         className={`p-1 rounded hover:bg-gray-700/50 transition-colors mr-2 ${favouriteServers.isFavourite(server.Server.id) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}
                         title={favouriteServers.isFavourite(server.Server.id) ? "Remove from favorites" : "Add to favorites"}
                     >
                         <Star className={`h-3.5 w-3.5 ${favouriteServers.isFavourite(server.Server.id) ? 'fill-current' : ''}`} />
                     </button>
                     <button
-                        onClick={handleHideServer}
+                        onClick={handleHideServer as any}
                         className="p-1 rounded hover:bg-gray-700/50 transition-colors mr-2 text-gray-500 hover:text-red-500"
                         title="Hide this server"
                     >
@@ -145,7 +145,7 @@ export default function ServerRowMobile({ isEven, server }: ServerRowMobileProps
                 </div>
                 <div className="flex items-center space-x-1 shrink-0 ml-2">
                     <button
-                        onClick={handleConnect}
+                        onClick={handleConnect as any}
                         className="text-white bg-green-500 hover:bg-green-600 p-1.5 rounded transition-colors duration-200 flex items-center justify-center"
                         title="Connect to server via Steam"
                     >

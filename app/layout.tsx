@@ -4,6 +4,7 @@ import { TRPCProvider } from "@/lib/trpc";
 import { jsonLd } from "@/components/seo/metadata";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sonner";
+import type { ReactNode } from "react";
 
 const rubik = Rubik({
     subsets: ['latin'],
@@ -12,7 +13,7 @@ const rubik = Rubik({
 export default function RootLayout({
     children,
 }: Readonly<{
-    children: React.ReactNode;
+    children: ReactNode;
 }>) {
     return (
         <>

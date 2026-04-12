@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,7 @@ export default function ServersView({ password }: ServersViewProps) {
 
     const isMutating = recheckMutation.isPending || hideMutation.isPending || setStatusMutation.isPending;
 
-    const handleSearch = (e: React.FormEvent) => {
+    const handleSearch = (e: FormEvent) => {
         e.preventDefault();
         setSearchAddress(addressInput.trim());
     };

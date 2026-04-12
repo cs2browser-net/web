@@ -61,7 +61,7 @@ export default function ServerRow({ isEven, server }: ServerRowProps) {
 
     const ping = useMemo(() => EstimatePing(server?.Server?.latitute, server?.Server?.longitude, location?.latitude, location?.longitude), [server, location]);
 
-    const handleCopyIP = (e: React.MouseEvent) => {
+    const handleCopyIP = (e: MouseEvent) => {
         navigator.clipboard.writeText(`connect ${server?.Server?.address}`);
         toast.success('Copy Address', {
             description: 'IP address copied to clipboard!',
@@ -70,7 +70,7 @@ export default function ServerRow({ isEven, server }: ServerRowProps) {
         });
     };
 
-    const handleConnect = (e: React.MouseEvent) => {
+    const handleConnect = (e: MouseEvent) => {
         const steamConnectUrl = `steam://connect/${server.Server.address}`;
         window.location.href = steamConnectUrl;
         toast.success('Connecting to server...', {
@@ -79,7 +79,7 @@ export default function ServerRow({ isEven, server }: ServerRowProps) {
         });
     };
 
-    const handleHideServer = (e: React.MouseEvent) => {
+    const handleHideServer = (e: MouseEvent) => {
         hiddenServers.toggleHidden(server.Server.id);
         toast.success('Server hidden! Refresh to see changes.', {
             icon: <EyeOff className="h-4 w-4" />,
@@ -87,7 +87,7 @@ export default function ServerRow({ isEven, server }: ServerRowProps) {
         });
     };
 
-    const handleToggleFavorite = (e: React.MouseEvent) => {
+    const handleToggleFavorite = (e: MouseEvent) => {
         const newState = favouriteServers.toggleFavourite(server.Server.id);
         toast.success(
             newState ? 'Added to favorites!' : 'Removed from favorites!',
@@ -116,14 +116,14 @@ export default function ServerRow({ isEven, server }: ServerRowProps) {
                 <div className="flex items-center min-w-0 py-1 w-full">
                     <div className="shrink-0 mr-4 flex items-center">
                         <button
-                            onClick={handleToggleFavorite}
+                            onClick={handleToggleFavorite as any}
                             className={`p-1 rounded hover:bg-gray-700/50 transition-colors mr-2 ${favouriteServers.isFavourite(server.Server.id) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}
                             title={favouriteServers.isFavourite(server.Server.id) ? "Remove from favorites" : "Add to favorites"}
                         >
                             <Star className={`h-4 w-4 ${favouriteServers.isFavourite(server.Server.id) ? 'fill-current' : ''}`} />
                         </button>
                         <button
-                            onClick={handleHideServer}
+                            onClick={handleHideServer as any}
                             className="p-1 rounded hover:bg-gray-700/50 transition-colors mr-2 text-gray-500 hover:text-red-500"
                             title={hiddenServers.isHidden(server.Server.id) ? "Unhide server" : "Hide server"}
                         >
@@ -152,7 +152,7 @@ export default function ServerRow({ isEven, server }: ServerRowProps) {
                         className="text-white text-xs xl:text-sm font-mono hover:text-[#00feed] hover:bg-gray-800/40 px-1 xl:px-2 py-1.5 rounded transition-colors duration-200 group/button leading-tight hyphens-auto flex items-center justify-center mx-auto"
                         title="Click to copy IP"
                         style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
-                        onClick={handleCopyIP}
+                        onClick={handleCopyIP as any}
                     >
                         <span className="mr-1">{server.Server.address}</span>
                         <Copy className="h-3 w-3 opacity-0 group-hover/button:opacity-100 transition-opacity" />
@@ -163,7 +163,7 @@ export default function ServerRow({ isEven, server }: ServerRowProps) {
                     <button
                         className="text-white text-xs bg-green-500 hover:bg-green-600 p-1.5 rounded transition-colors duration-200 flex items-center justify-center mx-auto"
                         title="Connect to server via Steam"
-                        onClick={handleConnect}
+                        onClick={handleConnect as any}
                     >
                         <Play className="h-4 w-4" />
                     </button>

@@ -2,12 +2,13 @@
 
 import { SITE_VARIANT } from "@/lib/consts/settings";
 import { BarChart3, Code, Eye, Globe, Heart, HelpCircle, List, LucideProps, Users } from "lucide-react";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 interface Route {
     title: string;
     href: string;
     description: string;
-    icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+    icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
     iconClassName?: string;
 }
 

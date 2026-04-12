@@ -2,13 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import { NavigationMenuLink } from "./navigation-menu";
-import { forwardRef } from "react";
+import { ComponentPropsWithoutRef, ElementRef, ElementType, forwardRef } from "react";
 
 export const ListItem = forwardRef<
-    React.ElementRef<"a">,
-    React.ComponentPropsWithoutRef<"a"> & {
+    ElementRef<"a">,
+    ComponentPropsWithoutRef<"a"> & {
         title: string;
-        icon?: React.ElementType;
+        icon?: ElementType;
         iconClassName?: string;
     }
 >(({ className, title, children, icon: Icon, iconClassName, ...props }, ref) => {
