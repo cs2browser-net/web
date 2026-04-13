@@ -1,0 +1,437 @@
+{
+  "id": "4c7994ee-09e0-4b9d-8c29-953ab8e9abde",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.Metrics": {
+      "name": "Metrics",
+      "schema": "",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "CheckedLast24Hours": {
+          "name": "CheckedLast24Hours",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CheckedLast7Days": {
+          "name": "CheckedLast7Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CheckedLast30Days": {
+          "name": "CheckedLast30Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "PrefilterLast24Hours": {
+          "name": "PrefilterLast24Hours",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "PrefilterLast7Days": {
+          "name": "PrefilterLast7Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "PrefilterLast30Days": {
+          "name": "PrefilterLast30Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "PlayersLast24Hours": {
+          "name": "PlayersLast24Hours",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "PlayersLast7Days": {
+          "name": "PlayersLast7Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "PlayersLast30Days": {
+          "name": "PlayersLast30Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.PlayersData": {
+      "name": "PlayersData",
+      "schema": "",
+      "columns": {
+        "ServerID": {
+          "name": "ServerID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "List": {
+          "name": "List",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaxLast24Hours": {
+          "name": "MaxLast24Hours",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaxLast7Days": {
+          "name": "MaxLast7Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaxLast30Days": {
+          "name": "MaxLast30Days",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Timestamp": {
+          "name": "Timestamp",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "PlayersData_ServerID_key": {
+          "name": "PlayersData_ServerID_key",
+          "columns": [
+            {
+              "expression": "ServerID",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "lsm",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "PlayersData_ServerID_fkey": {
+          "name": "PlayersData_ServerID_fkey",
+          "tableFrom": "PlayersData",
+          "tableTo": "Server",
+          "columnsFrom": [
+            "ServerID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.RateLimit": {
+      "name": "RateLimit",
+      "schema": "",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "IP": {
+          "name": "IP",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Kind": {
+          "name": "Kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Count": {
+          "name": "Count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "LastSeen": {
+          "name": "LastSeen",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "WindowStart": {
+          "name": "WindowStart",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Server": {
+      "name": "Server",
+      "schema": "",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "Address": {
+          "name": "Address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Country": {
+          "name": "Country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Latitute": {
+          "name": "Latitute",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Longitude": {
+          "name": "Longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Status": {
+          "name": "Status",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "LastUpdated": {
+          "name": "LastUpdated",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "LastStatusUpdate": {
+          "name": "LastStatusUpdate",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "Server_Address_key": {
+          "name": "Server_Address_key",
+          "columns": [
+            {
+              "expression": "Address",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "lsm",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ServerData": {
+      "name": "ServerData",
+      "schema": "",
+      "columns": {
+        "ServerID": {
+          "name": "ServerID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Hostname": {
+          "name": "Hostname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Map": {
+          "name": "Map",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaxPlayers": {
+          "name": "MaxPlayers",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "PlayersCount": {
+          "name": "PlayersCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "BotsCount": {
+          "name": "BotsCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Version": {
+          "name": "Version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Secure": {
+          "name": "Secure",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Tags": {
+          "name": "Tags",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "ServerData_ServerID_key": {
+          "name": "ServerData_ServerID_key",
+          "columns": [
+            {
+              "expression": "ServerID",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "lsm",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ServerData_ServerID_fkey": {
+          "name": "ServerData_ServerID_fkey",
+          "tableFrom": "ServerData",
+          "tableTo": "Server",
+          "columnsFrom": [
+            "ServerID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Tasks": {
+      "name": "Tasks",
+      "schema": "",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "TaskKind": {
+          "name": "TaskKind",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TaskData": {
+          "name": "TaskData",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TaskExecuted": {
+          "name": "TaskExecuted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

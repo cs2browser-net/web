@@ -8,6 +8,13 @@
       "when": 1774892574575,
       "tag": "0000_wooden_captain_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776095750291,
+      "tag": "0001_needy_tusk",
+      "breakpoints": true
     }
   ]
 }

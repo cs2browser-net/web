@@ -27,6 +27,7 @@ export const server = pgTable("Server", {
 	longitude: doublePrecision("Longitude").notNull(),
 	status: integer("Status").default(0).notNull(),
 	lastUpdated: timestamp("LastUpdated", { precision: 3, mode: 'string' }),
+	lastStatusUpdate: timestamp("LastStatusUpdate", { precision: 3, mode: 'string' }),
 }, (table) => [
 	uniqueIndex("Server_Address_key").using("lsm", table.address.asc().nullsLast().op("text_ops")),
 ]);
@@ -41,10 +42,10 @@ export const playersData = pgTable("PlayersData", {
 }, (table) => [
 	uniqueIndex("PlayersData_ServerID_key").using("lsm", table.serverId.asc().nullsLast().op("text_ops")),
 	foreignKey({
-			columns: [table.serverId],
-			foreignColumns: [server.id],
-			name: "PlayersData_ServerID_fkey"
-		}).onUpdate("cascade").onDelete("restrict"),
+		columns: [table.serverId],
+		foreignColumns: [server.id],
+		name: "PlayersData_ServerID_fkey"
+	}).onUpdate("cascade").onDelete("restrict"),
 ]);
 
 export const serverData = pgTable("ServerData", {
@@ -60,10 +61,10 @@ export const serverData = pgTable("ServerData", {
 }, (table) => [
 	uniqueIndex("ServerData_ServerID_key").using("lsm", table.serverId.asc().nullsLast().op("text_ops")),
 	foreignKey({
-			columns: [table.serverId],
-			foreignColumns: [server.id],
-			name: "ServerData_ServerID_fkey"
-		}).onUpdate("cascade").onDelete("restrict"),
+		columns: [table.serverId],
+		foreignColumns: [server.id],
+		name: "ServerData_ServerID_fkey"
+	}).onUpdate("cascade").onDelete("restrict"),
 ]);
 
 export const metrics = pgTable("Metrics", {
