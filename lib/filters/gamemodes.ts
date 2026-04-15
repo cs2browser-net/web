@@ -94,19 +94,20 @@ export function GetServersByGamemode(servers: any[], gm: string): any[] {
     if (!spec) return [];
 
     const patterns = toRegexArray(spec);
+    const andPatterns = (spec.andRules ?? []).map(({ field, text }) => ({
+        field,
+        regex: text instanceof RegExp
+            ? text
+            : field === "Hostname"
+                ? new RegExp(escapeRegex(String(text)), "i")
+                : new RegExp("^" + escapeRegex(String(text)), "i"),
+    }));
 
     return servers.filter((srv) => {
         const primaryMatch = patterns.some(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")));
         if (!primaryMatch) return false;
 
-        if (spec.andRules && spec.andRules.length > 0) {
-            return spec.andRules.every(({ field, text }) => {
-                const regex = text instanceof RegExp ? text : new RegExp("^" + escapeRegex(String(text)), "i");
-                return regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? ""));
-            });
-        }
-
-        return true;
+        return andPatterns.every(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")));
     });
 }
 
