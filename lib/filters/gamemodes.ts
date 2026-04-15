@@ -2,12 +2,14 @@ export type GamemodeSpec = {
     name: string;
     searchBy: ("Map" | "Hostname")[];
     text: string | (string | RegExp)[];
+    /** If set, a server must satisfy ALL of these conditions in addition to the primary match. */
+    andRules?: { field: "Map" | "Hostname"; text: string | RegExp }[];
 };
 
 export const GamemodeSlugs: Record<string, GamemodeSpec> = {
     "zombie-escape": { name: "Zombie Escape", searchBy: ["Map", "Hostname"], text: ["Zombie Escape", "ze_"] },
     surf: { name: "Surf", searchBy: ["Map", "Hostname"], text: ["surf", "surf_"] },
-    bunnyhop: { name: "BunnyHop", searchBy: ["Map", "Hostname"], text: ["bhop", "bhop_"] },
+    bunnyhop: { name: "BunnyHop", searchBy: ["Map", "Hostname"], text: ["bhop", "bhop_"], andRules: [{ field: "Map", text: "bhop_" }] },
     kz: { name: "KZ", searchBy: ["Map"], text: "kz_" },
     deathmatch: { name: "DeathMatch", searchBy: ["Hostname", "Map"], text: ["Deathmatch", "DM", "dm_"] },
     retake: { name: "Retake", searchBy: ["Hostname", "Map"], text: ["retake", "retakes_", "retake_"] },
@@ -92,10 +94,21 @@ export function GetServersByGamemode(servers: any[], gm: string): any[] {
     if (!spec) return [];
 
     const patterns = toRegexArray(spec);
+    const andPatterns = (spec.andRules ?? []).map(({ field, text }) => ({
+        field,
+        regex: text instanceof RegExp
+            ? text
+            : field === "Hostname"
+                ? new RegExp(escapeRegex(String(text)), "i")
+                : new RegExp("^" + escapeRegex(String(text)), "i"),
+    }));
 
-    return servers.filter((srv) =>
-        patterns.some(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")))
-    );
+    return servers.filter((srv) => {
+        const primaryMatch = patterns.some(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")));
+        if (!primaryMatch) return false;
+
+        return andPatterns.every(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")));
+    });
 }
 
 export function isZombieEscapeServer(server: any): boolean {
