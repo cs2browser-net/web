@@ -2,12 +2,14 @@ export type GamemodeSpec = {
     name: string;
     searchBy: ("Map" | "Hostname")[];
     text: string | (string | RegExp)[];
+    /** If set, a server must satisfy ALL of these conditions in addition to the primary match. */
+    andRules?: { field: "Map" | "Hostname"; text: string | RegExp }[];
 };
 
 export const GamemodeSlugs: Record<string, GamemodeSpec> = {
     "zombie-escape": { name: "Zombie Escape", searchBy: ["Map", "Hostname"], text: ["Zombie Escape", "ze_"] },
     surf: { name: "Surf", searchBy: ["Map", "Hostname"], text: ["surf", "surf_"] },
-    bunnyhop: { name: "BunnyHop", searchBy: ["Map", "Hostname"], text: ["bhop", "bhop_"] },
+    bunnyhop: { name: "BunnyHop", searchBy: ["Map", "Hostname"], text: ["bhop", "bhop_"], andRules: [{ field: "Map", text: "bhop_" }] },
     kz: { name: "KZ", searchBy: ["Map"], text: "kz_" },
     deathmatch: { name: "DeathMatch", searchBy: ["Hostname", "Map"], text: ["Deathmatch", "DM", "dm_"] },
     retake: { name: "Retake", searchBy: ["Hostname", "Map"], text: ["retake", "retakes_", "retake_"] },
@@ -93,9 +95,19 @@ export function GetServersByGamemode(servers: any[], gm: string): any[] {
 
     const patterns = toRegexArray(spec);
 
-    return servers.filter((srv) =>
-        patterns.some(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")))
-    );
+    return servers.filter((srv) => {
+        const primaryMatch = patterns.some(({ field, regex }) => regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? "")));
+        if (!primaryMatch) return false;
+
+        if (spec.andRules && spec.andRules.length > 0) {
+            return spec.andRules.every(({ field, text }) => {
+                const regex = text instanceof RegExp ? text : new RegExp("^" + escapeRegex(String(text)), "i");
+                return regex.test(String(srv?.ServerData?.[field.toLowerCase()] ?? ""));
+            });
+        }
+
+        return true;
+    });
 }
 
 export function isZombieEscapeServer(server: any): boolean {
