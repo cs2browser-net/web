@@ -64,6 +64,40 @@ export const serversRouter = router({
 
         return srv;
     }),
+    fetchAllServers: publicProcedure.query(async () => {
+        let servers = await queryCache.query(
+            'servers:all',
+            async () => {
+                const srvs = await db.select().from(serverData)
+                    .leftJoin(server, eq(server.id, serverData.serverId))
+                    .where(
+                        and(
+                            eq(server.status, 0),
+                            isNotNull(server.lastUpdated)
+                        )
+                    );
+
+                return srvs
+            },
+            ServersQueryCacheTTL
+        );
+
+        const deletingFields = ['status', 'lastStatusUpdate', 'lastUpdated'] as const;
+        const deletingDataFields = ['serverId', 'secure', 'version'] as const;
+
+        servers.forEach((server) => {
+            for (var i = 0; i < deletingFields.length; i++) {
+                const field = deletingFields[i];
+                delete (server.Server as any)[field];
+            }
+            for (var i = 0; i < deletingDataFields.length; i++) {
+                const field = deletingDataFields[i];
+                delete (server.ServerData as any)[field];
+            }
+        })
+
+        return servers;
+    }),
     fetchServers: publicProcedure.input(
         z.object({
             page: z.number().min(0).default(0),

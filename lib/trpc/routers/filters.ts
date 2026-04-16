@@ -5,87 +5,57 @@ import { getName } from 'country-list'
 import { continentNames, countryToContinent } from "@/lib/location/mappings";
 import { db } from "@/lib/db/drizzle";
 import { server, serverData } from "@/generated/drizzle/schema";
-import { and, count, desc, eq, isNotNull } from "drizzle-orm";
+import { and, eq, isNotNull } from "drizzle-orm";
 
 export const filtersRouter = router({
     getFilters: publicProcedure.query(async (data) => {
-        const countryRows = await queryCache.query(
-            'countries:count',
+        let servers = await queryCache.query(
+            'servers:all',
             async () => {
-                const groups = await db.select({
-                    country: server.country,
-                    countryCount: count(server.country)
-                }).from(server)
-                    .where(
-                        and(
-                            eq(server.status, 0),
-                            isNotNull(server.lastUpdated)
-                        )
-                    ).groupBy(server.country)
-                    .orderBy(desc(count(server.country)));
-
-                return groups;
-            },
-            ServersQueryCacheTTL
-        );
-
-        const versionRows = await queryCache.query(
-            'versions:count',
-            async () => {
-                const groups = await db.select({
-                    version: serverData.version,
-                    versionCount: count(serverData.version)
-                }).from(serverData)
+                const srvs = await db.select().from(serverData)
                     .leftJoin(server, eq(server.id, serverData.serverId))
                     .where(
                         and(
                             eq(server.status, 0),
                             isNotNull(server.lastUpdated)
                         )
-                    ).groupBy(serverData.version)
-                    .orderBy(desc(count(serverData.version)));
+                    );
 
-                return groups;
+                return srvs
             },
             ServersQueryCacheTTL
         );
 
-        const mapRows = await queryCache.query(
-            'maps:count',
-            async () => {
-                const groups = await db.select({
-                    map: serverData.map,
-                    mapCount: count(serverData.map)
-                }).from(serverData)
-                    .leftJoin(server, eq(server.id, serverData.serverId))
-                    .where(
-                        and(
-                            eq(server.status, 0),
-                            isNotNull(server.lastUpdated)
-                        )
-                    ).groupBy(serverData.map)
-                    .orderBy(desc(count(serverData.map)));
+        let precomputedVersions: Record<string, number> = {};
+        let precomputedMaps: Record<string, number> = {};
+        let precomputedCountries: Record<string, number> = {};
 
-                return groups;
-            },
-            ServersQueryCacheTTL
-        );
+        for (const srv of servers) {
+            if (!precomputedVersions.hasOwnProperty(srv.ServerData.version)) precomputedVersions[srv.ServerData.version] = 0;
+            precomputedVersions[srv.ServerData.version]++;
+
+            if (!precomputedMaps.hasOwnProperty(srv.ServerData.map)) precomputedMaps[srv.ServerData.map] = 0;
+            precomputedMaps[srv.ServerData.map]++;
+
+            if (!precomputedCountries.hasOwnProperty(srv.Server!.country)) precomputedCountries[srv.Server!.country] = 0;
+            precomputedCountries[srv.Server!.country]++;
+        }
 
         const countries: Record<string, any> = {}
         const continentCounts: Record<string, number> = {}
 
-        for (const country of countryRows) {
-            const countryName = getName(country.country);
-            const continent = countryToContinent[country.country.toLowerCase()];
+        for (const [country, count] of Object.entries(precomputedCountries)) {
+            const countryName = getName(country);
+            const continent = countryToContinent[country.toLowerCase()];
 
-            countries[country.country] = {
-                name: `${countryName} (${country.countryCount})`,
-                count: country.countryCount,
+            countries[country] = {
+                name: `${countryName} (${count})`,
+                count: count,
                 continent: continent
             };
 
             if (continent) {
-                continentCounts[continent] = (continentCounts[continent] || 0) + country.countryCount;
+                continentCounts[continent] = (continentCounts[continent] || 0) + count;
             }
         }
 
@@ -95,10 +65,10 @@ export const filtersRouter = router({
         }
 
         const maps: Record<string, any> = {}
-        for (const map of mapRows) maps[map.map] = `${map.map} (${map.mapCount})`;
+        for (const [map, count] of Object.entries(precomputedMaps)) maps[map] = `${map} (${count})`;
 
         const versions: Record<string, any> = {}
-        for (const version of versionRows) versions[version.version] = `${version.version} (${version.versionCount})`;
+        for (const [version, count] of Object.entries(precomputedVersions)) versions[version] = `${version} (${count})`;
 
         return {
             continents,
