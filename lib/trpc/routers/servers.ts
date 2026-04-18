@@ -9,11 +9,6 @@ import { GetServersByGamemode } from "@/lib/filters/gamemodes";
 import { playersData, server, serverData } from "@/generated/drizzle/schema";
 import { db } from "@/lib/db/drizzle";
 import { and, eq, isNotNull } from "drizzle-orm";
-import { ServerAndServerData } from "@/lib/api/data";
-import { CompressServerList } from "@/lib/utils/compressor/server";
-import { CompressedData } from "@/lib/utils/compressor/shared";
-
-let CompressedServerData: CompressedData | null = null;
 
 export const serversRouter = router({
     fetchServersWithId: publicProcedure.input(
@@ -70,8 +65,6 @@ export const serversRouter = router({
         return srv;
     }),
     fetchAllServers: publicProcedure.query(async () => {
-        let changed = false;
-
         let servers = await queryCache.query(
             'servers:all',
             async () => {
@@ -84,18 +77,26 @@ export const serversRouter = router({
                         )
                     );
 
-                changed = true;
-
                 return srvs
             },
             ServersQueryCacheTTL
         );
 
-        if (changed || CompressedServerData === null) {
-            CompressedServerData = CompressServerList(servers as ServerAndServerData[]);
-        }
+        const deletingFields = ['status', 'lastStatusUpdate', 'lastUpdated'] as const;
+        const deletingDataFields = ['serverId', 'secure', 'version'] as const;
 
-        return CompressedServerData;
+        servers.forEach((server) => {
+            for (var i = 0; i < deletingFields.length; i++) {
+                const field = deletingFields[i];
+                delete (server.Server as any)[field];
+            }
+            for (var i = 0; i < deletingDataFields.length; i++) {
+                const field = deletingDataFields[i];
+                delete (server.ServerData as any)[field];
+            }
+        })
+
+        return servers;
     }),
     fetchServers: publicProcedure.input(
         z.object({
