@@ -44,7 +44,7 @@ export default function SearchBox({ onToggleFilters, servers }: SearchBoxProps) 
         });
 
         setTimeout(() => {
-            trpcUtils.servers.fetchServers.invalidate();
+            trpcUtils.servers.fetchAllServers.invalidate();
             setRefreshing(false);
             toast.success('Server list updated!', {
                 duration: 2000,

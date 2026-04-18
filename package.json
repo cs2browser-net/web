@@ -19,6 +19,7 @@
     "@trpc/react-query": "^11.10.0",
     "@trpc/server": "^11.10.0",
     "@types/country-list": "^2.1.4",
+    "buffer": "^6.0.3",
     "canvas": "^3.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
