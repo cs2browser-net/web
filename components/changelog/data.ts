@@ -20,6 +20,108 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        date: '2026-04-19',
+        changes: {
+            feature: [
+                {
+                    type: 'feature',
+                    title: 'Client-Side Server Processing',
+                    description: 'Reintroduced client-side filtering, sorting, and pagination for server lists with full parity for existing filter behavior.',
+                    details: [
+                        'Home page now consumes full server snapshots and computes visible results locally',
+                        'Added shared filter precomputation to keep map/version/country counts in sync with the currently loaded dataset',
+                        'Added dedicated loading messaging while location-based ping estimates are being prepared'
+                    ]
+                }
+            ],
+            performance: [
+                {
+                    type: 'performance',
+                    title: 'Compressed Server Snapshot Transport',
+                    description: 'Added versioned server snapshot compression/decompression to reduce payload overhead when fetching all servers for client-side processing.',
+                    details: [
+                        'Servers router now returns a compressed payload for the full snapshot endpoint',
+                        'Introduced binary serialization + base64 transport with explicit payload versioning',
+                        'Compressed payload is reused across requests when source data has not changed'
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        date: '2026-04-16',
+        changes: {
+            performance: [
+                {
+                    type: 'performance',
+                    title: 'Server and Filter Route Computation Optimization',
+                    description: 'Reduced repeated database and aggregation work in core browsing routes.',
+                    details: [
+                        'Added reusable fetch-all route backed by cached server snapshots',
+                        'Reworked filter metadata generation to precompute maps/versions/countries from a single cached dataset pass',
+                        'Lowered per-request overhead for high-traffic filter and server list endpoints'
+                    ]
+                }
+            ],
+            bugfix: [
+                {
+                    type: 'bugfix',
+                    title: 'BunnyHop Gamemode Detection Accuracy',
+                    description: 'Fixed BunnyHop matching to avoid false positives by requiring map-prefix validation in addition to primary text matching.',
+                    details: [
+                        'Added support for additional AND rules in gamemode matching logic',
+                        'BunnyHop now requires a `bhop_` map condition for final classification'
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        date: '2026-04-12',
+        changes: {
+            feature: [
+                {
+                    type: 'feature',
+                    title: 'GeoIP Service Integration',
+                    description: 'Replaced local MMDB lookups with a dedicated GeoIP service client for IP geolocation.',
+                    details: [
+                        'Location API and IP utilities now resolve through the centralized GeoIP service',
+                        'Removed bundled local MMDB runtime dependency from the web app'
+                    ]
+                }
+            ],
+            improvement: [
+                {
+                    type: 'improvement',
+                    title: 'Search and Filter Evaluation Cleanup',
+                    description: 'Simplified server search and filtering flow for better maintainability and lower per-server overhead.',
+                    details: [
+                        'Precomputed map/version/country/continent/hidden-server sets before filtering',
+                        'Unified regex search with lowercase fallback behavior',
+                        'Reduced repeated array `includes` checks inside filtering loops'
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        date: '2026-03-12',
+        changes: {
+            feature: [
+                {
+                    type: 'feature',
+                    title: 'Admin Dashboard and Moderation Tools',
+                    description: 'Added password-protected admin controls for operational task handling and server moderation.',
+                    details: [
+                        'Added `/admin` page with authenticated Tasks and Servers management views',
+                        'Implemented task approval/rejection workflows for submissions and reports',
+                        'Added server actions for lookup, recheck, hide, and manual status updates'
+                    ]
+                }
+            ]
+        }
+    },
+    {
         date: '2026-03-02',
         changes: {
             feature: [
