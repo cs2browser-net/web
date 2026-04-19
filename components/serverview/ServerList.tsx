@@ -16,8 +16,6 @@ interface ServerListProps {
     currentPage: number;
     onPageChange: (page: number) => void;
     pageKind: "server-list" | "favourites" | "hidden";
-    loadingTitle?: string;
-    loadingDescription?: string;
 }
 
 const renderPaginationItems = (totalPages: number, currentPage: number, handlePageChange: (page: number) => void) => {
@@ -96,8 +94,8 @@ const renderPaginationItems = (totalPages: number, currentPage: number, handlePa
     return items;
 };
 
-export default function ServerList({ servers, currentPage, onPageChange, pageKind, loadingTitle, loadingDescription }: ServerListProps) {
-    if (!servers) return <LoadingState title={loadingTitle} description={loadingDescription} />;
+export default function ServerList({ servers, currentPage, onPageChange, pageKind }: ServerListProps) {
+    if (!servers) return <LoadingState />;
 
     if (servers.count == 0) {
         if (pageKind == "server-list") return <EmptyState />;
