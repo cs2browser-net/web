@@ -26,9 +26,9 @@ export const filtersRouter = router({
             ServersQueryCacheTTL
         );
 
-        let precomputedVersions: Record<string, number> = {};
-        let precomputedMaps: Record<string, number> = {};
-        let precomputedCountries: Record<string, number> = {};
+        const precomputedVersions: Record<string, number> = {};
+        const precomputedMaps: Record<string, number> = {};
+        const precomputedCountries: Record<string, number> = {};
 
         for (const srv of servers) {
             if (!precomputedVersions.hasOwnProperty(srv.ServerData.version)) precomputedVersions[srv.ServerData.version] = 0;
