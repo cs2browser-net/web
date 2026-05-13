@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createCanvas, registerFont } from 'canvas';
 import { queryCache } from "@/lib/cache/query-cache";
-import { bannerCache } from "@/lib/cache/banner-cache";
 import { ServersQueryCacheTTL } from "@/lib/consts/servers";
 import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 import { db } from "@/lib/db/drizzle";
@@ -142,42 +141,37 @@ export async function GET(req: Request, { params }: { params: Promise<{ serverid
         ServersQueryCacheTTL
     );
 
-    const bannerBuffer = await bannerCache.generateOrGet(
-        `banner:${serverid}:big`,
-        async () => {
-            const bannerData = {
-                name: "Server Offline",
-                ip: "Unknown",
-                port: "Unknown",
-                status: "offline",
-                map: "Unknown",
-                players: 0,
-                maxPlayers: 0,
-                history: []
-            };
+    const bannerData = {
+        name: "Server Offline",
+        ip: "Unknown",
+        port: "Unknown",
+        status: "offline",
+        map: "Unknown",
+        players: 0,
+        maxPlayers: 0,
+        history: []
+    };
 
-            if (srv?.ServerData) {
-                bannerData.name = srv.ServerData.hostname || "Unknown Server";
-                bannerData.ip = srv.Server.address.split(":")[0] || "Unknown";
-                bannerData.port = srv.Server.address.split(":")[1] || "Unknown";
-                bannerData.status = "online";
-                bannerData.map = srv.ServerData.map || "Unknown";
-                bannerData.players = srv.ServerData.playersCount || 0;
-                bannerData.maxPlayers = srv.ServerData.maxPlayers || 0;
-                // @ts-expect-error
-                bannerData.history = Object.keys(srv.PlayersData?.maxLast24Hours!).sort().map(timestamp => srv.PlayersData?.maxLast24Hours![timestamp] || 0) || [];
-            }
+    if (srv?.ServerData) {
+        bannerData.name = srv.ServerData.hostname || "Unknown Server";
+        bannerData.ip = srv.Server.address.split(":")[0] || "Unknown";
+        bannerData.port = srv.Server.address.split(":")[1] || "Unknown";
+        bannerData.status = "online";
+        bannerData.map = srv.ServerData.map || "Unknown";
+        bannerData.players = srv.ServerData.playersCount || 0;
+        bannerData.maxPlayers = srv.ServerData.maxPlayers || 0;
+        // @ts-expect-error
+        bannerData.history = Object.keys(srv.PlayersData?.maxLast24Hours!).sort().map(timestamp => srv.PlayersData?.maxLast24Hours![timestamp] || 0) || [];
+    }
 
-            return makeBanner(bannerData);
-        },
-        ServersQueryCacheTTL
-    );
+    const bannerBuffer = makeBanner(bannerData);
 
     return new NextResponse(new Uint8Array(bannerBuffer), {
         status: 200,
         headers: {
             "Content-Type": "image/png",
             "Content-Disposition": `inline; filename="banner-big-${serverid}.png"`,
+            "Cache-Control": "public, max-age=" + (String(ServersQueryCacheTTL / 1000))
         }
     });
 }

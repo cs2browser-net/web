@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createCanvas, registerFont } from 'canvas';
 import { queryCache } from "@/lib/cache/query-cache";
-import { bannerCache } from "@/lib/cache/banner-cache";
 import { ServersQueryCacheTTL } from "@/lib/consts/servers";
 import { playersData, server, serverData } from "@/generated/drizzle/schema";
 import { db } from "@/lib/db/drizzle";
@@ -103,35 +102,30 @@ export async function GET(req: Request, { params }: { params: Promise<{ serverid
         ServersQueryCacheTTL
     );
 
-    const bannerBuffer = await bannerCache.generateOrGet(
-        `banner:${serverid}:small`,
-        async () => {
-            const bannerData = {
-                name: "Server Offline",
-                status: "offline",
-                map: "Unknown",
-                players: 0,
-                maxPlayers: 0
-            };
+    const bannerData = {
+        name: "Server Offline",
+        status: "offline",
+        map: "Unknown",
+        players: 0,
+        maxPlayers: 0
+    };
 
-            if (srv?.ServerData) {
-                bannerData.name = srv.ServerData.hostname || "Unknown Server";
-                bannerData.status = "online";
-                bannerData.map = srv.ServerData.map || "Unknown";
-                bannerData.players = srv.ServerData.playersCount || 0;
-                bannerData.maxPlayers = srv.ServerData.maxPlayers || 0;
-            }
+    if (srv?.ServerData) {
+        bannerData.name = srv.ServerData.hostname || "Unknown Server";
+        bannerData.status = "online";
+        bannerData.map = srv.ServerData.map || "Unknown";
+        bannerData.players = srv.ServerData.playersCount || 0;
+        bannerData.maxPlayers = srv.ServerData.maxPlayers || 0;
+    }
 
-            return makeBanner(bannerData);
-        },
-        ServersQueryCacheTTL
-    );
+    const bannerBuffer = makeBanner(bannerData);
 
     return new NextResponse(new Uint8Array(bannerBuffer), {
         status: 200,
         headers: {
             "Content-Type": "image/png",
             "Content-Disposition": `inline; filename="banner-small-${serverid}.png"`,
+            "Cache-Control": "public, max-age=" + (String(ServersQueryCacheTTL / 1000))
         }
     });
 }
