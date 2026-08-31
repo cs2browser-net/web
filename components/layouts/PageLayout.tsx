@@ -27,7 +27,7 @@ export default function PageLayout({ children }: Readonly<{ children: ReactNode 
                     <p className="text-center text-xs text-gray-400">
                         {SiteSettings[SITE_VARIANT].name} is a hobby project and is not affiliated with Valve or Steam. All times on the site are in UTC.<br />
                         Steam and the Steam logo are trademarks of Valve Corporation. All other trademarks are property of their respective owners.<br />
-                        Copyright © 2025-2026 <span className="text-[#00feed]">Swiftly Solution SRL</span>. All rights reserved.
+                        Copyright © 2025-2026 <span className="text-[#00feed]">SwiftlyLabs.net</span>. All rights reserved.
                     </p>
                 </div>
             </footer>
