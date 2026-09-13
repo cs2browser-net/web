@@ -1,6 +1,6 @@
 import PageLayout from "@/components/layouts/PageLayout";
-import Swiftly from '@/images/group/swiftlys2.png'
-import CS2Browser from '@/images/group/cs2browser.png'
+import Swiftly from "@/images/group/swiftlys2.png";
+import CS2Browser from "@/images/group/cs2browser.png";
 import Image from "next/image";
 import Link from "next/link";
 import { defaultMetadata, defaultViewport } from "@/components/seo/metadata";
@@ -10,10 +10,17 @@ import { SITE_VARIANT, SiteSettings } from "@/lib/consts/settings";
 export const metadata: Metadata = {
     ...defaultMetadata,
     title: "Swiftly Group - " + SiteSettings[SITE_VARIANT].name,
-    description: "Learn about Swiftly Group, the team behind " + SiteSettings[SITE_VARIANT].name + " and Swiftly " + SiteSettings[SITE_VARIANT].gamename + " plugin framework. Discover our " + SiteSettings[SITE_VARIANT].gamename + " development projects.",
-}
+    description:
+        "Learn about Swiftly Group, the team behind " +
+        SiteSettings[SITE_VARIANT].name +
+        " and Swiftly " +
+        SiteSettings[SITE_VARIANT].gamename +
+        " plugin framework. Discover our " +
+        SiteSettings[SITE_VARIANT].gamename +
+        " development projects.",
+};
 
-export const viewport: Viewport = defaultViewport
+export const viewport: Viewport = defaultViewport;
 
 export default function Group() {
     return (
@@ -32,31 +39,6 @@ export default function Group() {
                     <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl overflow-hidden hover:border-gray-600/50 transition-colors">
                         <div className="aspect-video overflow-hidden">
                             <Image
-                                src={CS2Browser}
-                                alt="csgoservers.net"
-                                width={400}
-                                height={225}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                        <div className="p-6">
-                            <h3 className="text-xl font-bold mb-2 text-white">
-                                CSGO Server Browser
-                            </h3>
-                            <p className="text-[#00feed] hover:text-[#00d4c7] mb-3 text-sm transition-colors">
-                                <Link href={"https://csgoservers.net"} target="_blank" rel="noopener noreferrer">https://csgoservers.net</Link>
-                            </p>
-                            <p className="text-gray-300 text-sm leading-relaxed">
-                                Explore one of the most comprehensive Counter-Strike: Global Offensive server directories.
-
-                                Quickly find the perfect server with powerful filters by region, mode, or community favorites like Zombie Escape, Surf, BunnyHop, Retake, AWP, and more.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl overflow-hidden hover:border-gray-600/50 transition-colors">
-                        <div className="aspect-video overflow-hidden">
-                            <Image
                                 src={Swiftly}
                                 alt="swiftlys2.net"
                                 width={400}
@@ -69,12 +51,21 @@ export default function Group() {
                                 SwiftlyS2
                             </h3>
                             <p className="text-[#00feed] hover:text-[#00d4c7] mb-3 text-sm transition-colors">
-                                <Link href={"https://swiftlys2.net"} target="_blank" rel="noopener noreferrer">https://swiftlys2.net</Link>
+                                <Link
+                                    href={"https://swiftlys2.net"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    https://swiftlys2.net
+                                </Link>
                             </p>
                             <p className="text-gray-300 text-sm leading-relaxed">
-                                SwifltyS2 is a server modification plugin for Counter Strike 2 which is based on Metamod:Source.
-
-                                This server modification platform allows plugins to be created easily, providing lightning-fast speed for your source code.
+                                SwifltyS2 is a server modification plugin for
+                                Counter Strike 2 which is based on
+                                Metamod:Source. This server modification
+                                platform allows plugins to be created easily,
+                                providing lightning-fast speed for your source
+                                code.
                             </p>
                         </div>
                     </div>
@@ -94,17 +85,26 @@ export default function Group() {
                                 CS2 Server Browser
                             </h3>
                             <p className="text-[#00feed] hover:text-[#00d4c7] mb-3 text-sm transition-colors">
-                                <Link href={"https://cs2browser.net"} target="_blank" rel="noopener noreferrer">https://cs2browser.net</Link>
+                                <Link
+                                    href={"https://cs2browser.net"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    https://cs2browser.net
+                                </Link>
                             </p>
                             <p className="text-gray-300 text-sm leading-relaxed">
-                                Explore one of the most comprehensive Counter-Strike 2 server directories, with over 10,000 servers tracked.
-
-                                Quickly find the perfect server with powerful filters by region, mode, or community favorites like Zombie Escape, Surf, BunnyHop, Retake, AWP, and more.
+                                Explore one of the most comprehensive
+                                Counter-Strike 2 server directories, with over
+                                10,000 servers tracked. Quickly find the perfect
+                                server with powerful filters by region, mode, or
+                                community favorites like Zombie Escape, Surf,
+                                BunnyHop, Retake, AWP, and more.
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
         </PageLayout>
-    )
+    );
 }
